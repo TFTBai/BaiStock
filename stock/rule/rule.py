@@ -463,6 +463,6 @@ def all_rule(mustList):
                 total = total.append(dft)
     print('生成totalcsv文件开始!' + str(datetime.datetime.now()))
     total.to_csv(con.detailPath + str(datetime.datetime.now().date()) + 'total' + totalCsvName + '.csv', index=False)
-    print('生成csv文件结束!' + str(datetime.datetime.now()))
+    print('生成csv文件结束!       ' + str(datetime.datetime.now()))
     return 1
 all_rule(1)
