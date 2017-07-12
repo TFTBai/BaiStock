@@ -4,6 +4,7 @@ import numpy as np
 import tushare as ts
 from common import constant as con
 
+
 # 计算kdj值并add到stock_data中
 def get_kdj(stock_data):
     # kdj计算
