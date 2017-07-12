@@ -243,7 +243,7 @@ def use_the_choose_rule(df, list):
     规则1:日线小于30日线的80%
     '''
     if (isChooseRule(ruleId, list)):
-        df['日线小于30日线的75%'] = (df['close'] / df['60days'] <0.70)
+        df['日线小于30日线的75%'] = (df['5days'] / df['60days'] <0.75)
 
     '''
     规则2:kdj小于20
@@ -380,7 +380,7 @@ def all_rule(mustList):
     # ruleNumList = [10]
     # ruleNumListMust = mustList
 
-    totalCsvName = '60days'
+    totalCsvName = '5-60-75'
     # 生存总规则list并且排序
     allList = ruleNumList + ruleNumListMust
     allList.sort()
@@ -463,6 +463,5 @@ def all_rule(mustList):
                 total = total.append(dft)
     print('生成totalcsv文件开始!' + str(datetime.datetime.now()))
     total.to_csv(con.detailPath + str(datetime.datetime.now().date()) + 'total' + totalCsvName + '.csv', index=False)
-    print('生成csv文件结束!       ' + str(datetime.datetime.now()))
+    print('生成csv文件结束!' + str(datetime.datetime.now()))
     return 1
-all_rule(1)
