@@ -8,103 +8,6 @@ import datetime
 import gc
 
 
-# 循环列表 删除base中符合的code的行
-# 对符合的删除前33行
-# 循环时跳过第一行,从第二行开始算有效
-
-def cut_by_rule(df):
-    # kdj
-    df['kdj小于20'] = (df['kdj_k'] < 20) & (df['kdj_d'] < 20) & (df['kdj_j'] < 20)
-    df['j大于前一天'] = df['kdj_j'] > df['kdj_j'].shift()
-    df['d-j<3'] = df['kdj_d'] - df['kdj_j'] < 3
-    df['k-j<3'] = df['kdj_k'] - df['kdj_j'] < 5
-    # macd
-    df['macd<0'] = df['macd'] < 0
-    df['|macd/2|<3'] = (-3 < (df['macd'] / 2)) & ((df['macd'] / 2) < 3)
-    df['diff大于前一天'] = df['macd_DIFF'] > df['macd_DIFF'].shift()
-    # rsi
-    df['rsi6、rsi12、rsi24<50'] = (df['rsi6'] < 50) & (df['rsi12'] < 50) & (df['rsi24'] < 50)
-    df['|rsi6-rsi12|<3'] = (-3 < (df['rsi6'] - df['rsi12'])) & ((df['rsi6'] - df['rsi12']) < 3)
-    df['|rsi6-RSI24|<5'] = (-5 < (df['rsi6'] - df['rsi24'])) & ((df['rsi6'] - df['rsi24']) < 5)
-    # 日线    ①日线小于30日均线的80%
-    df['day<80%'] = round(df['close'] / df['30days'], 2) < 0.8
-
-    # 筛选符合条件的日期
-    df = df[(df['kdj小于20'] == True) & (df['j大于前一天'] == True) & (df['d-j<3'] == True) & (df['k-j<3'] == True)
-            & (df['macd<0'] == True) & (df['|macd/2|<3'] == True) & (df['diff大于前一天'] == True)
-            & (df['rsi6、rsi12、rsi24<50'] == True) & (df['|rsi6-rsi12|<3'] == True) & (df['|rsi6-RSI24|<5'] == True)
-            & (df['day<80%'] == True)]
-    return df
-
-
-'''
-第二套规则
-一、KDJ
-    ①kdj小于20
-    ②j第0日-前一日>5
-    ③0<d-j<3
-    ④0<k-j<5
-    ⑤0<k-d<3
-    ⑥j前日-大前日>3
-    ⑦（k当日-前日）>（k前日-大前日）
-二、日线
-'''
-
-
-def cut_by_30days(df):
-    # 日线    ①日线小于30日均线的80%
-    df['day<80%'] = round(df['close'] / df['30days'], 2) < 0.8
-    df['kdj小于20'] = (df['kdj_k'] < 20) & (df['kdj_d'] < 20) & (df['kdj_j'] < 20)
-    df['j当日-前一日>5'] = df['kdj_j'] - df['kdj_j'].shift() > 5
-    df['0<d-j<3'] = (df['kdj_d'] - df['kdj_j'] < 3) & (df['kdj_d'] - df['kdj_j'] > 0)
-    df['0<k-j<5'] = (df['kdj_k'] - df['kdj_j'] < 5) & (df['kdj_d'] - df['kdj_j'] > 0)
-    df['0<k-d<3'] = (df['kdj_k'] - df['kdj_d'] < 3) & (df['kdj_d'] - df['kdj_j'] > 0)
-    df['j前日-大前日>3'] = (df['kdj_j'].shift() - df['kdj_j'].shift().shift()) > 3
-    df['（k当日-前日）>（k前日-大前日)'] = (df['kdj_k'] - df['kdj_k'].shift()) - (
-        df['kdj_k'].shift() - df['kdj_k'].shift().shift()) > 0
-    # 筛选符合条件的日期
-    df = df[((df['day<80%'] == True)
-             & (df['kdj小于20'] == True)
-             & (df['j当日-前一日>5'] == True)
-             & (df['0<d-j<3'] == True)
-             & (df['0<k-j<5'] == True)
-             & (df['0<k-d<3'] == True)
-             & (df['j前日-大前日>3'] == True)
-             & (df['（k当日-前日）>（k前日-大前日)'] == True))
-    ]
-    return df
-
-
-# 8公里规则
-def use_rule_8km(df):
-    # 日线    ①日线小于30日均线的80%
-    df['day<80%'] = round(df['close'] / df['30days'], 2) < 0.80
-    df['kdj小于20'] = (df['kdj_k'] < 20) & (df['kdj_d'] < 20) & (df['kdj_j'] < 20)
-    df['j大于前一天'] = df['kdj_j'] > df['kdj_j'].shift()
-    df['macd大于前一天'] = df['macd'] > df['macd'].shift()
-    df = df[(df['day<80%'] == True)
-            & (df['kdj小于20'] == True)
-            & (df['j大于前一天'] == True)
-            & (df['macd大于前一天'] == True)
-            ]
-    return df
-
-
-def find_right_stock():
-    count = 0
-    allCode = bs.get_all_code()
-    rightStock = pd.DataFrame()
-    for code in allCode.code:
-        codeStr = str(code).zfill(6)
-        print('开始筛选' + codeStr + '已经筛选了' + str(count))
-        stock_data = pd.read_csv(con.csvPath + codeStr + '.csv')
-        count = count + 1
-        if stock_data.empty:
-            continue
-            # rightStock = rightStock.append(stock_data, ignore_index=True)
-    return rightStock
-
-
 ## 获取成熟规则list
 def get_total_list():
     allList = []
@@ -126,7 +29,6 @@ def get_total_list():
             rightList.append(ruleInt)
         allList.append(rightList)
     return allList
-
 
 
 def get_all_rule(allList):
@@ -243,7 +145,7 @@ def use_the_choose_rule(df, list):
     规则1:日线小于30日线的80%
     '''
     if (isChooseRule(ruleId, list)):
-        df['日线小于30日线的75%'] = (df['5days'] / df['60days'] <0.75)
+        df['日线小于30日线的75%'] = (df['close'] / df['60days'] < 0.7)
 
     '''
     规则2:kdj小于20
@@ -252,17 +154,18 @@ def use_the_choose_rule(df, list):
         # df['kdj小于20'] = (df['kdj_k'] < 20) & (df['kdj_d'] < 20) & (df['kdj_j'] < 20)
         # df['日线小于30日线的80%'] = (df['close'] / df['30days'] <0.8)
         # if (isChooseRule(ruleId, list)):
-            # df['kdj小于20'] = (df['kdj_k'] < 20) & (df['kdj_d'] < 20) & (df['kdj_j'] < 20)
-            # df['日线小于30日线的80%'] = (df['close'] / df['30days'] <0.8)
+        # df['kdj小于20'] = (df['kdj_k'] < 20) & (df['kdj_d'] < 20) & (df['kdj_j'] < 20)
+        # df['日线小于30日线的80%'] = (df['close'] / df['30days'] <0.8)
         df['日线小于30日线的80%'] = (df['kdj_k'] <= df['kdj_k'].shift()) & (df['kdj_k'].shift() <= df['kdj_k'].shift(2)) & (
-            df['kdj_k'].shift(2) <=df['kdj_k'].shift(3)) & (df['kdj_k'].shift(3) <= df['kdj_k'].shift(4)) & (
-                df['kdj_k'].shift(4) <= df['kdj_k'].shift(5))
+            df['kdj_k'].shift(2) <= df['kdj_k'].shift(3)) & (df['kdj_k'].shift(3) <= df['kdj_k'].shift(4)) & (
+                                 df['kdj_k'].shift(4) <= df['kdj_k'].shift(5))
 
     '''
     规则3:j大于前一天
     '''
     if (isChooseRule(ruleId, list)):
-        df['j大于前一天'] = (df['kdj_j'] > df['kdj_j'].shift()) & (df['kdj_k'] > df['kdj_k'].shift()) & (df['kdj_d'] > df['kdj_d'].shift())
+        df['j大于前一天'] = (df['kdj_j'] > df['kdj_j'].shift()) & (df['kdj_k'] > df['kdj_k'].shift()) & (
+            df['kdj_d'] > df['kdj_d'].shift())
 
     '''
     规则4:macd大于前一天
@@ -361,26 +264,22 @@ def use_the_choose_rule(df, list):
     规则17:低开
     '''
     if (isChooseRule(ruleId, list)):
-        df['低开'] = df['open']/df['close'].shift()<0.95
+        df['低开'] = df['open'] / df['close'].shift() < 0.95
 
     return df
 
 '''
-一规则法
-每次只使用一个规则
+
 '''
-
-
 def all_rule(mustList):
     '''
-    规则配置准备区,4,5,6,7,11,17
+    1.生成规则数组
     '''
-    ruleNumList = [1]
-    ruleNumListMust = [10,4,7]
+    ruleNumList = [10]
+    ruleNumListMust = [1,4,5,7]
     # ruleNumList = [10]
     # ruleNumListMust = mustList
 
-    totalCsvName = '5-60-75'
     # 生存总规则list并且排序
     allList = ruleNumList + ruleNumListMust
     allList.sort()
@@ -391,14 +290,19 @@ def all_rule(mustList):
         iter = itertools.combinations(ruleNumList, i)
         listAll.append(list(iter))
 
-    # 加载所有规则
+
+    '''
+    2.加载所有规则属性信息
+    '''
     ruleList = get_all_rule(allList)
-    print(datetime.datetime.now())
-    '''第一步 获取所有的stock数据命名放入内存中'''
+
+    '''
+    3.获取所有的stock数据命名放入内存中
+    '''
     count = 0
     # 1.读取base文件获取所有的csv文件名=code
     allCode = bs.get_all_code()
-
+    print(allCode)
     # 声明一个dfnamelist用于存储所有的 stock内存名称
     dfmList = []
     # 声明一个total存储最终的总报表
@@ -412,20 +316,27 @@ def all_rule(mustList):
         dfmList.append(stockdf)
         # 3.读取本地csv数据
         locals()[stockdf] = pd.read_csv(con.csvPath + codeStr + '.csv')
-
-        '''第二步 当前stock增加规则标记'''
+        '''
+        4.为当前stock增加规则标记
+        '''
         locals()[stockdf] = use_the_choose_rule(locals()[stockdf], allList)
     dfmcount = 0
     exampleCount = 0
-    '''第三步 循环执行所有的规则'''
+
+    '''
+    5.循环执行所有的规则
+    '''
+    #1.循环所有的规则数组组合
     for inList in listAll:
+        #2.循环规则数组中的每一个,
         for brackets in inList:
             brackets = list(brackets) + ruleNumListMust
             brackets.sort()
             detailTempList = []
-            # 1.基于规则循环所有stock内存数据 计算detail
             dfName = 'rule'
+            #3.循环每一个数组中的每一个规则
             for ruleNum in brackets:
+                #4.循环规则列表中的每一个规则属性和数组中的规则匹配,来生成规则命名
                 for rule in ruleList:
                     if (ruleNum == rule.num):
                         if (rule.tf == True):
@@ -435,8 +346,11 @@ def all_rule(mustList):
             exampleCount = exampleCount + 1
             print('开始生成规则' + dfName + '的数据!当前是第' + str(exampleCount) + '种规则.')
             print(datetime.datetime.now())
+            #5.循环所有的缓存csv列表,处理缓存数据
             for dfm in dfmList:
+                #复制一份缓存数据,以免影响后面的规则
                 dfc = copy.deepcopy(locals()[dfm])
+                #6.根据规则列表中规则是ture还是false来筛选符合情况的股票
                 for ruleNum in brackets:
                     for rule in ruleList:
                         if (ruleNum == rule.num):
@@ -444,17 +358,19 @@ def all_rule(mustList):
                                 dfc = dfc[dfc[rule.name] == True]
                             if (rule.tf == False):
                                 dfc = dfc[dfc[rule.name] == False]
+                #如果筛选后,没有任何股票符合条件,则直接跳过此规则
                 if dfc.empty:
                     continue
+                #7.将符合条件的股票加入临时变量集合中
                 detailTempList.append(dfc)
-            # 如果规则筛选出了样本则进行生成csv等
+            #8.如果规则筛选出了样本则进行生成csv等
             if (len(detailTempList) > 0):
                 tempDetail = pd.concat(detailTempList)
                 if (False):
                     tempDetail = tempDetail[tempDetail['date'] > '2017-05-01']
                     if len(tempDetail) <= 0:
                         return -1
-                if (True):
+                if (False):
                     tempDetail.to_csv(con.detailPath + str(datetime.datetime.now().date()) + dfName + 'detail.csv',
                                       index=False)
                 dft = view.get_total_csv(tempDetail, dfName)
@@ -462,6 +378,10 @@ def all_rule(mustList):
                 gc.collect()
                 total = total.append(dft)
     print('生成totalcsv文件开始!' + str(datetime.datetime.now()))
+    #最终生成csv命名
+    totalCsvName = '2'
     total.to_csv(con.detailPath + str(datetime.datetime.now().date()) + 'total' + totalCsvName + '.csv', index=False)
     print('生成csv文件结束!' + str(datetime.datetime.now()))
     return 1
+
+all_rule(1)

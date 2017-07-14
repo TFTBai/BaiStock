@@ -3,7 +3,7 @@
 '''
 from base import baseStock as bs
 from rule import rule
-
+from common import dateUtil
 def init_csv():
     bs.create_base()
     bs.create_all_stock_csv()
@@ -12,8 +12,10 @@ def init_csv():
     return
 
 def update_csv():
+    startDate = dateUtil.print_date()
     bs.add_kmr_data()
     bs.update_all_stock()
+    dateUtil.print_end_date(startDate)
     return
 
 def get_one_stock():

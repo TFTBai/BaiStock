@@ -115,12 +115,16 @@ def update_all_stock():
     log.info("所有stock数据更新完毕!")
 
 
-    '''
-    获取今日数据
-    '''
+'''
+获取今日数据
+'''
 def get_today_stock():
     # 获取今日数据
     today_stock_data = ts.get_today_all()
     return today_stock_data
 
-
+'''创建大盘指数csv'''
+def create_index_csv(codeStr):
+    log.info("当前开始生成指数" + codeStr + "的CSV文件!")
+    stock_data = ts.get_k_data(codeStr, start='2010-01-01', end='2016-12-31')
+    stock_data.to_csv(con.csvPath + codeStr + '.csv', index=False, encoding='utf-8')
