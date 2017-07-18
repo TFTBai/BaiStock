@@ -118,7 +118,7 @@ def add_final_income(df, rightStock):
 def add_right_count(df, rightstock):
     all_count = len(rightstock)
     df['totalCount'] = all_count
-    df['totalCountP'] = round(all_count / 3931050, 4) * 100
+    df['totalCountP'] = round(all_count / 420000, 4) * 100
     return df
 
 
@@ -126,7 +126,7 @@ def add_right_count(df, rightstock):
 def add_right_count_by_date(df, rightstock):
     all_count = len(rightstock)
     df['dateCount'] = all_count
-    df['dateCountP'] = round(all_count / 1730, 4) * 100
+    df['dateCountP'] = round(all_count / 1824, 4) * 100
     return df
 
 
@@ -149,10 +149,13 @@ def get_total_csv(rightStock, dfname):
     # df = add_final_income(df, rightStock)
     df = add_right_count(df, rightStock)
     rightStock = group_by_date(rightStock)
+    #是否生产中间表
     if (False):
         rightStock.to_csv(con.detailPath + dfname + 'mean.csv',
                           index=False)
+    #增加筛选规则对应的样本数量和百分百显示
     df = add_right_count_by_date(df, rightStock)
+    #计算并且增加 评价收益
     df = add_income_mean(df, rightStock)
     df = add_days_income_percent(df, rightStock)
     # df = add_high_income_mean(df,rightStockH)

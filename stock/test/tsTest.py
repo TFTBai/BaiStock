@@ -1,5 +1,6 @@
 import tushare as ts
 import pandas as pd
+from common import constant as con
 
 
 # 按时间查询
@@ -34,3 +35,16 @@ def get_today_all():
 def get_csv():
     df = pd.read_csv("D:/workSpace/python/stock/base/today.csv")
     print(df)
+
+
+# 测试两个csv按日期合并
+def get_csv():
+    df = pd.read_csv(con.csvPath + '900951.csv')
+    print(df)
+    df2 = pd.read_csv(con.csvPath + '900930.csv')
+    print(df2)
+    df3 = pd.merge(df, df2,how='left',on=['date'])
+    print(df3)
+    df3.to_csv(con.csvPath + 'ffff' + '.csv', index=False, encoding='utf-8')
+
+

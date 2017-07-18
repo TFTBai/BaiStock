@@ -120,6 +120,11 @@ def get_all_rule(allList):
     rule17.num = 17
     rule17.name = '低开'
 
+    rule18 = rule()
+    rule18.tf = True
+    rule18.num = 18
+    rule18.name = '交易量猛增'
+
     ruleList = []
 
     # 只把需要的规则加入rulelist中
@@ -266,6 +271,12 @@ def use_the_choose_rule(df, list):
     if (isChooseRule(ruleId, list)):
         df['低开'] = df['open'] / df['close'].shift() < 0.95
 
+    '''
+    规则18:交易量猛增
+    '''
+    if (isChooseRule(ruleId, list)):
+        df['交易量猛增'] = df['volume'] / df['volume'].shift() > 3
+
     return df
 
 '''
@@ -276,7 +287,7 @@ def all_rule(mustList):
     1.生成规则数组
     '''
     ruleNumList = [10]
-    ruleNumListMust = [1,4,5,7]
+    ruleNumListMust = [18]
     # ruleNumList = [10]
     # ruleNumListMust = mustList
 
@@ -366,11 +377,13 @@ def all_rule(mustList):
             #8.如果规则筛选出了样本则进行生成csv等
             if (len(detailTempList) > 0):
                 tempDetail = pd.concat(detailTempList)
+                #9.是否进行日期筛选
                 if (False):
                     tempDetail = tempDetail[tempDetail['date'] > '2017-05-01']
                     if len(tempDetail) <= 0:
                         return -1
-                if (False):
+                #10.是否生成detail表
+                if (True):
                     tempDetail.to_csv(con.detailPath + str(datetime.datetime.now().date()) + dfName + 'detail.csv',
                                       index=False)
                 dft = view.get_total_csv(tempDetail, dfName)
@@ -384,4 +397,3 @@ def all_rule(mustList):
     print('生成csv文件结束!' + str(datetime.datetime.now()))
     return 1
 
-all_rule(1)
