@@ -134,6 +134,21 @@ def get_all_rule(allList):
     rule19.num = 19
     rule19.name = '收盘价大于前一天'
 
+    rule20 = rule()
+    rule20.tf = True
+    rule20.num = 20
+    rule20.name = '日线大于前一天'
+
+    rule21 = rule()
+    rule21.tf = True
+    rule21.num = 21
+    rule21.name = '日线成多头排列'
+
+    rule22 = rule()
+    rule22.tf = True
+    rule22.num = 22
+    rule22.name = '日线紧密排列'
+
     ruleList = []
 
     # 只把需要的规则加入rulelist中
@@ -290,10 +305,29 @@ def use_the_choose_rule(df, list):
         df['交易量猛增'] = df['volume'] / df['volume'].shift() > 3
 
     '''
-    规则19
+    规则19：收盘价大于前一天
     '''
     if (isChooseRule(ruleId, list)):
         df['收盘价大于前一天'] = (df['close'] > df['close'].shift())
+
+    '''
+    规则20：日线大于前一天
+    '''
+    if (isChooseRule(ruleId, list)):
+        df['日线大于前一天'] = (df['5days'] > df['5days'].shift()) & (df['10days'] > df['10days'].shift()) & (
+        df['20days'] > df['20days'].shift()) & (df['30days'] > df['30days'].shift())
+
+    '''
+    规则21：日线成多头排列
+    '''
+    if (isChooseRule(ruleId, list)):
+        df['日线成多头排列'] = (df['5days'] > df['10days']) & (df['10days'] > df['20days']) & (df['20days'] > df['30days'])
+
+    '''
+    规则22：日线紧密排列
+    '''
+    if (isChooseRule(ruleId, list)):
+        df['日线紧密排列'] = (df['5days']/df['10days']<1.005) & (df['10days']/df['20days']<1.005) & (df['20days']/df['30days']<1.005)
     return df
 
 
@@ -388,7 +422,7 @@ def generate_report_form(ChooseCombinations, ruleNumListMust, ruleList, stockCas
             '''
             开始生成某规则的收益total数据
             '''
-            totalProfit = view.get_total_csv(tempDetail, ruleName,stockArgX)
+            totalProfit = view.get_total_csv(tempDetail, ruleName, stockArgX)
             # 将某规则的收益total数据添加到total报表中
             totalReportForm = totalReportForm.append(totalProfit)
 
@@ -396,7 +430,8 @@ def generate_report_form(ChooseCombinations, ruleNumListMust, ruleList, stockCas
     dateUtil.print_date()
     # 最终生成csv命名
     totalCsvName = stockArgX.totalCsvName
-    totalReportForm.to_csv(con.detailPath + str(dateUtil.get_date_date()) +dateUtil.get_hour_and_minute_str()+ 'total' + totalCsvName + '.csv',
+    totalReportForm.to_csv(con.detailPath + str(
+        dateUtil.get_date_date()) + dateUtil.get_hour_and_minute_str() + 'total' + totalCsvName + '.csv',
                            index=False)
     print('生成csv文件结束!')
 
@@ -419,6 +454,7 @@ def put_all_stock_into_cash(baseCodeList):
         # 3.读取本地csv数据
         globals()[stockCash] = pd.read_csv(con.csvPath + codeStr + '.csv')
     return stockCashList
+
 
 '''
 按规则参数生成股票数据
