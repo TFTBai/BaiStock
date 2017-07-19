@@ -53,6 +53,7 @@ def update_csv():
 
 def start_stock_generator():
     startDate = dateUtil.print_date()
+
     # 定义参数类
     class stockArg:
         # total报表命名
@@ -72,11 +73,11 @@ def start_stock_generator():
     stockArg1 = stockArg()
     stockArg1.totalCsvName = '测试'
     stockArg1.ruleNumListChoose = [10]
-    stockArg1.ruleNumListMust = [18]
+    stockArg1.ruleNumListMust = [1, 4, 7]
     stockArg1.detail = True
-    stockArg1.mean = True
-    stockArg1.dateRangeTF = True
-    stockArg1.dateRangeTF = '2017-05-01'
+    stockArg1.mean = False
+    stockArg1.dateRangeTF = False
+    stockArg1.dateRange = '2017-05-01'
 
     # 执行规则数据生成器方法
     rule.make_stockData_by_choose(stockArg1)
