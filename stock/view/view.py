@@ -3,7 +3,8 @@
 '''
 from common import constant as con
 import pandas as pd
-import copy
+from common import dateUtil
+import gc
 
 
 #
@@ -137,34 +138,59 @@ def group_by_date(rightstock):
 
 
 '''
-生成总报表
+生成某规则的total报表数据
 
 '''
 
 
-def get_total_csv(rightStock, dfname):
+def get_total_csv(rightStock, dfname, stockArgX):
     rightStocklist = [dfname]
-    df = pd.DataFrame({'rule': rightStocklist})
+    totalProfit = pd.DataFrame({'rule': rightStocklist})
     # rightStockH = copy.deepcopy(rightStock)
-    # df = add_final_income(df, rightStock)
-    df = add_right_count(df, rightStock)
+    # totalProfit = add_final_income(totalProfit, rightStock)
+    totalProfit = add_right_count(totalProfit, rightStock)
     rightStock = group_by_date(rightStock)
-    #是否生产中间表
-    if (False):
-        rightStock.to_csv(con.detailPath + dfname + 'mean.csv',
+    # 是否生产中间表
+    if (stockArgX.mean):
+        rightStock.to_csv(con.detailPath + str(dateUtil.get_date_date()) + dateUtil.get_hour_and_minute_str()+ dfname + 'mean.csv',
                           index=False)
-    #增加筛选规则对应的样本数量和百分百显示
-    df = add_right_count_by_date(df, rightStock)
-    #计算并且增加 评价收益
-    df = add_income_mean(df, rightStock)
-    df = add_days_income_percent(df, rightStock)
-    # df = add_high_income_mean(df,rightStockH)
-    # df = add_max_price_day_percent(df, rightStock)
-    return df
+    # 增加筛选规则对应的样本数量和百分百显示
+    totalProfit = add_right_count_by_date(totalProfit, rightStock)
+    # 计算并且增加 评价收益
+    totalProfit = add_income_mean(totalProfit, rightStock)
+    totalProfit = add_days_income_percent(totalProfit, rightStock)
+    # totalProfit = add_high_income_mean(totalProfit,rightStockH)
+    # totalProfit = add_max_price_day_percent(totalProfit, rightStock)
+
+    # 清除临时detail缓存
+    del rightStock
+    # 马上重置垃圾清除器
+    gc.collect()
+    return totalProfit
 
 
 '''
-生成每次发生报表
+生成detail报表
 '''
-def get_detail_csv():
-    return
+
+
+def generate_detail_csv(detailTempList, stockArgX, ruleName):
+    # 8.如果规则筛选出了样本则进行生成csv等
+    if (len(detailTempList) > 0):
+        # 连接所有的detail数据
+        tempDetail = pd.concat(detailTempList)
+        # 转换为pandas的dataframe格式
+        tempDetail = pd.DataFrame(tempDetail)
+        # 按日期逆向排序
+        tempDetail = tempDetail.sort(columns='date', ascending=False)
+        # 9.是否进行日期筛选
+        if (stockArgX.dateRangeTF):
+            tempDetail = tempDetail[tempDetail['date'] > stockArgX.dateRange]
+            if len(tempDetail) <= 0:
+                return -1
+        # 10.是否生成detail表
+        if (stockArgX.detail):
+            tempDetail.to_csv(con.detailPath + str(
+                dateUtil.get_date_date()) + dateUtil.get_hour_and_minute_str() + ruleName + 'detail.csv',
+                              index=False)
+        return tempDetail

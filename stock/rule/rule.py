@@ -1,34 +1,38 @@
 from base import baseStock as bs
 import pandas as pd
 from common import constant as con
-import itertools
+from common import commonUtil
 import copy
 from view import view
 import datetime
 import gc
+from common import dateUtil
+
+'''
+获取成熟规则list,由于代码结构调整暂不可用,有需求时修改恢复
+'''
 
 
-## 获取成熟规则list
-def get_total_list():
-    allList = []
-    df = pd.read_csv(con.detailPath + '2017-03-23total模拟开始纪念版数据收益.csv')
-    ruleLists = df['rule']
-    count = 0
-    for ruleList in ruleLists:
-        count = count + 1
-        ruleList = ruleList.replace('rule', '')
-        ruleList = ruleList.replace('+10', '')
-        ruleList = ruleList.replace('+', ',')
-        ruleList = ruleList.replace('-', ',')
-        ruleList = ruleList.replace(',', '', 1)
-        list(ruleList)
-        tempList = ruleList.split(',')
-        rightList = []
-        for rule in tempList:
-            ruleInt = int(rule)
-            rightList.append(ruleInt)
-        allList.append(rightList)
-    return allList
+# def get_total_list():
+#     allList = []
+#     df = pd.read_csv(con.detailPath + '2017-03-23total模拟开始纪念版数据收益.csv')
+#     ruleLists = df['rule']
+#     count = 0
+#     for ruleList in ruleLists:
+#         count = count + 1
+#         ruleList = ruleList.replace('rule', '')
+#         ruleList = ruleList.replace('+10', '')
+#         ruleList = ruleList.replace('+', ',')
+#         ruleList = ruleList.replace('-', ',')
+#         ruleList = ruleList.replace(',', '', 1)
+#         list(ruleList)
+#         tempList = ruleList.split(',')
+#         rightList = []
+#         for rule in tempList:
+#             ruleInt = int(rule)
+#             rightList.append(ruleInt)
+#         allList.append(rightList)
+#     return allList
 
 
 def get_all_rule(allList):
@@ -125,12 +129,16 @@ def get_all_rule(allList):
     rule18.num = 18
     rule18.name = '交易量猛增'
 
+    rule19 = rule()
+    rule19.tf = True
+    rule19.num = 19
+    rule19.name = '收盘价大于前一天'
+
     ruleList = []
 
     # 只把需要的规则加入rulelist中
     for num in allList:
         ruleList.append(locals()['rule' + str(num)])
-
     return ruleList
 
 
@@ -143,14 +151,18 @@ def isChooseRule(ruleNum, list):
         return False
 
 
-# 给可选规则增加标记
+'''
+给规则增加标记
+'''
+
+
 def use_the_choose_rule(df, list):
     ruleId = [0]
     '''
     规则1:日线小于30日线的80%
     '''
     if (isChooseRule(ruleId, list)):
-        df['日线小于30日线的75%'] = (df['close'] / df['60days'] < 0.7)
+        df['日线小于30日线的75%'] = (df['2days'] / df['60days'] < 0.74) & (df['close'] / df['30days'] < 0.82)
 
     '''
     规则2:kdj小于20
@@ -197,12 +209,12 @@ def use_the_choose_rule(df, list):
                         df['close'] > df['open'])
     '''
     规则7:rsi
-    RSI均小于 45。RSI均当日大于前日
+    RSI均小于 45且大于30。RSI均当日大于前日
     '''
     if (isChooseRule(ruleId, list)):
         df['rsi'] = (df['rsi6'] < 45) & (df['rsi12'] < 45) & (df['rsi24'] < 45) & (df['rsi6'] > df['rsi6'].shift()) & (
-            df['rsi12'] > df['rsi12'].shift()) & (
-                        df['rsi24'] > df['rsi24'].shift())
+            df['rsi12'] > df['rsi12'].shift()) & (df['rsi24'] > df['rsi24'].shift()) & (df['rsi6'] > 30) & (
+                        df['rsi12'] > 30) & (df['rsi24'] > 30)
     '''
     规则8
     5日线上交叉60日线
@@ -277,123 +289,176 @@ def use_the_choose_rule(df, list):
     if (isChooseRule(ruleId, list)):
         df['交易量猛增'] = df['volume'] / df['volume'].shift() > 3
 
+    '''
+    规则19
+    '''
+    if (isChooseRule(ruleId, list)):
+        df['收盘价大于前一天'] = (df['close'] > df['close'].shift())
     return df
 
-'''
 
 '''
-def all_rule(mustList):
-    '''
-    1.生成规则数组
-    '''
-    ruleNumList = [10]
-    ruleNumListMust = [18]
-    # ruleNumList = [10]
-    # ruleNumListMust = mustList
+增加股票规则标记
+'''
 
-    # 生存总规则list并且排序
-    allList = ruleNumList + ruleNumListMust
+
+def add_stock_mark(stockCashList, allList):
+    for stockCash in stockCashList:
+        globals()[stockCash] = use_the_choose_rule(globals()[stockCash], allList)
+
+
+'''
+开始生成符合规则的股票数据,根据股票标记与规则一一对应筛选
+'''
+
+
+def get_TF_stock(stockCashList, brackets, ruleList):
+    # 为了存储 筛选出的股票组成detail 声明一个数组
+    detailTempList = []
+    # 5.循环所有的缓存csv列表,处理缓存数据
+    for dfm in stockCashList:
+        # 复制一份缓存数据,以免影响后面的规则
+        dfc = copy.deepcopy(globals()[dfm])
+        # 6.根据规则列表中规则是ture还是false来筛选符合情况的股票
+        for ruleNum in brackets:
+            for rule in ruleList:
+                if (ruleNum == rule.num):
+                    # 如果规则是True则股票数据使用True筛选
+                    if (rule.tf == True):
+                        dfc = dfc[dfc[rule.name] == True]
+                    # 如果规则是False则股票数据使用False筛选
+                    if (rule.tf == False):
+                        dfc = dfc[dfc[rule.name] == False]
+        # 如果筛选后,没有任何股票符合条件,则直接跳过此规则
+        if dfc.empty:
+            continue
+        # 7.将符合条件的股票加入临时变量集合中
+        detailTempList.append(dfc)
+    return detailTempList
+
+
+'''
+循环规则组合与股票标记一一对应 生成detail和total报表
+'''
+
+
+def generate_report_form(ChooseCombinations, ruleNumListMust, ruleList, stockCashList, stockArgX):
+    # 声明最终的total报表
+    totalReportForm = pd.DataFrame()
+
+    # 规则实例数量
+    exampleCount = 0
+    # 1.循环所有的规则数组组合
+    for inList in ChooseCombinations:
+        # 2.循环规则数组中的每一个,
+        for brackets in inList:
+            # 将必选规则添加到规则中
+            brackets = list(brackets) + ruleNumListMust
+            # 对形成的规则排序
+            brackets.sort()
+            # 为规则前面加rule前缀
+            ruleName = 'rule'
+            # 3.循环每一个数组中的每一个规则
+            for ruleNum in brackets:
+                # 4.循环规则列表中的每一个规则属性和数组中的规则匹配,来生成规则命名
+                for rule in ruleList:
+                    if (ruleNum == rule.num):
+                        # 如果规则定义为Ture增加+号标记
+                        if (rule.tf == True):
+                            ruleName = ruleName + '+' + str(ruleNum)
+                        # 如果规则定义为Ture增加-号标记
+                        if (rule.tf == False):
+                            ruleName = ruleName + '-' + str(ruleNum)
+            # 规则实例数量+1
+            exampleCount = exampleCount + 1
+            print('开始生成规则' + ruleName + '的数据!当前是第' + str(exampleCount) + '种规则.')
+            # 打印当前时间
+            dateUtil.print_date()
+
+            '''
+            开始生成复合规则的股票数据,根据股票标记与规则一一对应筛选
+            '''
+            detailTempList = get_TF_stock(stockCashList, brackets, ruleList)
+
+            '''
+            开始生成detail.csv报表
+            '''
+            tempDetail = view.generate_detail_csv(detailTempList, stockArgX, ruleName)
+
+            '''
+            开始生成某规则的收益total数据
+            '''
+            totalProfit = view.get_total_csv(tempDetail, ruleName,stockArgX)
+            # 将某规则的收益total数据添加到total报表中
+            totalReportForm = totalReportForm.append(totalProfit)
+
+    print('生成totalcsv文件开始!')
+    dateUtil.print_date()
+    # 最终生成csv命名
+    totalCsvName = stockArgX.totalCsvName
+    totalReportForm.to_csv(con.detailPath + str(dateUtil.get_date_date()) +dateUtil.get_hour_and_minute_str()+ 'total' + totalCsvName + '.csv',
+                           index=False)
+    print('生成csv文件结束!')
+
+
+'''
+获取所有的stock数据命名放入内存中
+'''
+
+
+def put_all_stock_into_cash(baseCodeList):
+    count = 0
+    # 声明一个dfnamelist用于存储所有的 stock内存名称
+    stockCashList = []
+    # 2.循环所有的csv文件
+    for codeStr in baseCodeList:
+        count = count + 1
+        print('开始准备' + codeStr + '的内存数据,当前的数量是' + str(count))
+        stockCash = 'stockCash' + codeStr
+        stockCashList.append(stockCash)
+        # 3.读取本地csv数据
+        globals()[stockCash] = pd.read_csv(con.csvPath + codeStr + '.csv')
+    return stockCashList
+
+'''
+按规则参数生成股票数据
+'''
+
+
+def make_stockData_by_choose(stockArgX):
+    ruleNumListChoose = stockArgX.ruleNumListChoose
+    ruleNumListMust = stockArgX.ruleNumListMust
+    '''
+    1.创建 可选规则 的所有组合
+    '''
+    ChooseCombinations = commonUtil.get_all_combinations(ruleNumListChoose)
+
+    '''
+    2.加载输入规则集合的属性信息
+    '''
+    # 生成 可选和必选规则的 集合list
+    allList = ruleNumListChoose + ruleNumListMust
+    # 对集合list排序
     allList.sort()
-
-    # 创建 规则号 的组合
-    listAll = []
-    for i in range(1, len(ruleNumList) + 1):
-        iter = itertools.combinations(ruleNumList, i)
-        listAll.append(list(iter))
-
-
-    '''
-    2.加载所有规则属性信息
-    '''
+    # 根据集合list加载需要的规则对象
     ruleList = get_all_rule(allList)
 
     '''
-    3.获取所有的stock数据命名放入内存中
+    3.获取base.csv中所有的code 放入缓存中
     '''
-    count = 0
-    # 1.读取base文件获取所有的csv文件名=code
-    allCode = bs.get_all_code()
-    print(allCode)
-    # 声明一个dfnamelist用于存储所有的 stock内存名称
-    dfmList = []
-    # 声明一个total存储最终的总报表
-    total = pd.DataFrame()
-    # 2.循环所有的csv文件
-    for code in allCode.code:
-        codeStr = str(code).zfill(6)
-        count = count + 1
-        print('开始准备' + codeStr + '的内存数据,当前的数量是' + str(count))
-        stockdf = 'df' + codeStr
-        dfmList.append(stockdf)
-        # 3.读取本地csv数据
-        locals()[stockdf] = pd.read_csv(con.csvPath + codeStr + '.csv')
-        '''
-        4.为当前stock增加规则标记
-        '''
-        locals()[stockdf] = use_the_choose_rule(locals()[stockdf], allList)
-    dfmcount = 0
-    exampleCount = 0
+    baseCodeList = bs.put_base_csv_code_into_cash()
 
     '''
-    5.循环执行所有的规则
+    4.获取所有的stock数据命名放入内存中,返回stock内存数据名称list
     '''
-    #1.循环所有的规则数组组合
-    for inList in listAll:
-        #2.循环规则数组中的每一个,
-        for brackets in inList:
-            brackets = list(brackets) + ruleNumListMust
-            brackets.sort()
-            detailTempList = []
-            dfName = 'rule'
-            #3.循环每一个数组中的每一个规则
-            for ruleNum in brackets:
-                #4.循环规则列表中的每一个规则属性和数组中的规则匹配,来生成规则命名
-                for rule in ruleList:
-                    if (ruleNum == rule.num):
-                        if (rule.tf == True):
-                            dfName = dfName + '+' + str(ruleNum)
-                        if (rule.tf == False):
-                            dfName = dfName + '-' + str(ruleNum)
-            exampleCount = exampleCount + 1
-            print('开始生成规则' + dfName + '的数据!当前是第' + str(exampleCount) + '种规则.')
-            print(datetime.datetime.now())
-            #5.循环所有的缓存csv列表,处理缓存数据
-            for dfm in dfmList:
-                #复制一份缓存数据,以免影响后面的规则
-                dfc = copy.deepcopy(locals()[dfm])
-                #6.根据规则列表中规则是ture还是false来筛选符合情况的股票
-                for ruleNum in brackets:
-                    for rule in ruleList:
-                        if (ruleNum == rule.num):
-                            if (rule.tf == True):
-                                dfc = dfc[dfc[rule.name] == True]
-                            if (rule.tf == False):
-                                dfc = dfc[dfc[rule.name] == False]
-                #如果筛选后,没有任何股票符合条件,则直接跳过此规则
-                if dfc.empty:
-                    continue
-                #7.将符合条件的股票加入临时变量集合中
-                detailTempList.append(dfc)
-            #8.如果规则筛选出了样本则进行生成csv等
-            if (len(detailTempList) > 0):
-                tempDetail = pd.concat(detailTempList)
-                #9.是否进行日期筛选
-                if (False):
-                    tempDetail = tempDetail[tempDetail['date'] > '2017-05-01']
-                    if len(tempDetail) <= 0:
-                        return -1
-                #10.是否生成detail表
-                if (True):
-                    tempDetail.to_csv(con.detailPath + str(datetime.datetime.now().date()) + dfName + 'detail.csv',
-                                      index=False)
-                dft = view.get_total_csv(tempDetail, dfName)
-                del tempDetail
-                gc.collect()
-                total = total.append(dft)
-    print('生成totalcsv文件开始!' + str(datetime.datetime.now()))
-    #最终生成csv命名
-    totalCsvName = '2'
-    total.to_csv(con.detailPath + str(datetime.datetime.now().date()) + 'total' + totalCsvName + '.csv', index=False)
-    print('生成csv文件结束!' + str(datetime.datetime.now()))
-    return 1
+    stockCashList = put_all_stock_into_cash(baseCodeList)
 
+    '''
+    5.为当前所有stock增加股票规则标记
+    '''
+    add_stock_mark(stockCashList, allList)
+
+    '''
+    6.循环规则组合与股票标记一一对应 生成detail和total报表
+    '''
+    generate_report_form(ChooseCombinations, ruleNumListMust, ruleList, stockCashList, stockArgX)

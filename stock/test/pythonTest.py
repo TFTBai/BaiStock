@@ -49,3 +49,9 @@ def jisuanshouyi():
     print(income)
 
 
+'''获取当前日期'''
+
+
+def get_date_date():
+    startDate = datetime.datetime.now().minute
+    print(str(startDate))

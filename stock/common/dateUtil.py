@@ -17,6 +17,23 @@ def get_date_now():
     return startDate
 
 
+'''获取当前日期'''
+
+
+def get_date_date():
+    startDate = datetime.datetime.now().date()
+    return startDate
+'''获取当前小时'''
+
+
+def get_hour_and_minute_str():
+    hour = datetime.datetime.now().hour
+    minute = datetime.datetime.now().minute
+    return '-'+str(hour)+'-'+str(minute)
+
+
+
+
 '''获取时间差'''
 
 
@@ -29,7 +46,7 @@ def get_date_diff(startDate, endDate):
 
 
 def print_date():
-    startDate=get_date_now()
+    startDate = get_date_now()
     print('当前时间为:' + str(startDate))
     return startDate
 

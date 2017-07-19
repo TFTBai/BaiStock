@@ -44,15 +44,10 @@ def get_rsi(stock_data):
 
 # 获取5、30、60日线数据
 def get_30days(stock_data):
+    stock_data['2days'] = round(pd.rolling_mean(stock_data['close'], 2), 2)
     stock_data['5days'] = round(pd.rolling_mean(stock_data['close'], 5), 2)
-    stock_data['10days'] = round(pd.rolling_mean(stock_data['close'], 10), 2)
-    stock_data['20days'] = round(pd.rolling_mean(stock_data['close'], 20), 2)
     stock_data['30days'] = round(pd.rolling_mean(stock_data['close'], 30), 2)
     stock_data['60days'] = round(pd.rolling_mean(stock_data['close'], 60), 2)
-    stock_data['80days'] = round(pd.rolling_mean(stock_data['close'], 80), 2)
-    stock_data['90days'] = round(pd.rolling_mean(stock_data['close'], 90), 2)
-    stock_data['100days'] = round(pd.rolling_mean(stock_data['close'], 100), 2)
-    stock_data['120days'] = round(pd.rolling_mean(stock_data['close'], 120), 2)
     return stock_data
 
 
@@ -60,8 +55,6 @@ def get_30days(stock_data):
 1.获取6天 最高收益 收盘收益
 2.以及2-7日，最高价位是哪天
 '''
-
-
 def get_income(stock_data):
     highestDay = stock_data['high'].shift(-1)
     stock_data['highestDay'] = 1
@@ -132,3 +125,6 @@ def get_lost_data(stock_data, codeStr):
     stock_data_lost = ts.get_k_data(codeStr)
     stock_data_lost = stock_data_lost[stock_data_lost['date'] > '2016-12-31']
     return stock_data.append(stock_data_lost)
+
+
+
