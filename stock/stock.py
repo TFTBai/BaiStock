@@ -14,7 +14,9 @@ def init_csv():
     startDate = dateUtil.print_date()
     bs.create_base()
     bs.create_all_stock_csv()
-    bs.add_kmr_data()
+    bs.create_all_index_csv()
+    bs.add_index_derivative_data()
+    bs.add_stock_derivative_data()
     bs.update_all_stock()
     dateUtil.print_end_date(startDate)
     return
@@ -27,7 +29,8 @@ def init_csv():
 
 def update_csv():
     startDate = dateUtil.print_date()
-    bs.add_kmr_data()
+    bs.add_index_derivative_data()
+    bs.add_stock_derivative_data()
     bs.update_all_stock()
     dateUtil.print_end_date(startDate)
     return
@@ -71,9 +74,9 @@ def start_stock_generator():
 
     # 参数组合1
     stockArg1 = stockArg()
-    stockArg1.totalCsvName = '多头日线测试'
-    stockArg1.ruleNumListChoose = [20,21,22]
-    stockArg1.ruleNumListMust = [10]
+    stockArg1.totalCsvName = '测试'
+    stockArg1.ruleNumListChoose = [10]
+    stockArg1.ruleNumListMust = [1, 19, 7,10001]
     stockArg1.detail = True
     stockArg1.mean = False
     stockArg1.dateRangeTF = False
@@ -81,6 +84,7 @@ def start_stock_generator():
 
     # 执行规则数据生成器方法
     rule.make_stockData_by_choose(stockArg1)
+
     dateUtil.print_end_date(startDate)
 
 

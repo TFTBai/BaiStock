@@ -55,6 +55,8 @@ def get_30days(stock_data):
 1.获取6天 最高收益 收盘收益
 2.以及2-7日，最高价位是哪天
 '''
+
+
 def get_income(stock_data):
     highestDay = stock_data['high'].shift(-1)
     stock_data['highestDay'] = 1
@@ -120,11 +122,8 @@ def get_d1od0c(stock_data):
 
 
 # 补全近期数据
-def get_lost_data(stock_data, codeStr):
+def get_lost_data(stock_data, codeStr, index):
     stock_data = stock_data[stock_data['date'] <= '2016-12-31']
-    stock_data_lost = ts.get_k_data(codeStr)
+    stock_data_lost = ts.get_k_data(codeStr, index=index)
     stock_data_lost = stock_data_lost[stock_data_lost['date'] > '2016-12-31']
     return stock_data.append(stock_data_lost)
-
-
-

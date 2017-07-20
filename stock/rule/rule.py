@@ -4,8 +4,6 @@ from common import constant as con
 from common import commonUtil
 import copy
 from view import view
-import datetime
-import gc
 from common import dateUtil
 
 '''
@@ -34,6 +32,20 @@ from common import dateUtil
 #         allList.append(rightList)
 #     return allList
 
+def get_all_index_rule(allList):
+    class rule:
+        num = 0
+        name = ''
+
+    rule10001 = rule()
+    rule10001.tf = True
+    rule10001.num = 10001
+    rule10001.name = '日线小于30日线的75%'
+    ruleList = []
+    # 只把需要的规则加入rulelist中
+    for num in allList:
+        ruleList.append(locals()['rule' + str(num)])
+    return ruleList
 
 def get_all_rule(allList):
     class rule:
@@ -149,6 +161,13 @@ def get_all_rule(allList):
     rule22.num = 22
     rule22.name = '日线紧密排列'
 
+    '''
+    以下为大盘规则
+    '''
+    rule10001 = rule()
+    rule10001.tf = True
+    rule10001.num = 10001
+    rule10001.name = '大盘规则1'
     ruleList = []
 
     # 只把需要的规则加入rulelist中
@@ -164,15 +183,39 @@ def isChooseRule(ruleNum, list):
         return True
     else:
         return False
+'''
+根据股票代码,获取对应的指数缓存
+'''
+def get_right_indexCash(codeStr):
+    indexCashName = 'indexCash'
+    if(con.shenIndexBegin == codeStr):
+        indexCashName = indexCashName+con.shenIndex
+    if(con.chuangIndexBegin == codeStr):
+        indexCashName = indexCashName+con.chuangIndex
+    if(con.shangIndexBegin == codeStr):
+        indexCashName = indexCashName+con.shangIndex
+    if(con.shangBIndexBegin == codeStr):
+        indexCashName = indexCashName+con.shangIndex
+    dfIndex = globals()[indexCashName]
+    return dfIndex
 
+def use_the_index_choose_rule(dfIndex, list):
+    ruleId = [10000]
+    '''
+    规则10001:大盘规则1
+    '''
+    if (isChooseRule(ruleId, list)):
+        dfIndex['大盘规则1'] = dfIndex['macd'] > dfIndex['macd'].shift()
+    return dfIndex
 
 '''
-给规则增加标记
+给stock增加技术指标标记
 '''
 
 
 def use_the_choose_rule(df, list):
     ruleId = [0]
+
     '''
     规则1:日线小于30日线的80%
     '''
@@ -330,7 +373,6 @@ def use_the_choose_rule(df, list):
         df['日线紧密排列'] = (df['5days']/df['10days']<1.005) & (df['10days']/df['20days']<1.005) & (df['20days']/df['30days']<1.005)
     return df
 
-
 '''
 增加股票规则标记
 '''
@@ -340,6 +382,13 @@ def add_stock_mark(stockCashList, allList):
     for stockCash in stockCashList:
         globals()[stockCash] = use_the_choose_rule(globals()[stockCash], allList)
 
+        '''
+        对股票做大盘指数规则附加
+        '''
+        #获取股票代码的前两位
+        stockCode = stockCash[9:11]
+        dfIndex = get_right_indexCash(stockCode)
+        globals()[stockCash] = pd.merge(globals()[stockCash], dfIndex, how='left', on=['date'])
 
 '''
 开始生成符合规则的股票数据,根据股票标记与规则一一对应筛选
@@ -457,6 +506,36 @@ def put_all_stock_into_cash(baseCodeList):
 
 
 '''
+获取所有的stock数据命名放入内存中
+'''
+
+
+def put_all_index_into_cash():
+    baseIndexList = con.baseIndexList
+    count = 0
+    # 声明一个dfnamelist用于存储所有的 stock内存名称
+    indexCashList = []
+    # 2.循环所有的csv文件
+    for codeStr in baseIndexList:
+        count = count + 1
+        print('开始准备' + codeStr + '的指数内存数据,当前的数量是' + str(count))
+        indexCash = 'indexCash' + codeStr
+        indexCashList.append(indexCash)
+        # 3.读取本地csv数据放入全局变量中
+        globals()[indexCash] = pd.read_csv(con.indexCsvPath + codeStr + '.csv')
+    return indexCashList
+'''
+为每一个指数基础数据增加规则TF标记后,去掉基础数据
+'''
+def add_ruleTF_for_index(indexCashList,allList):
+    for indexCash in indexCashList:
+        globals()[indexCash] = use_the_index_choose_rule(globals()[indexCash],allList)
+        globals()[indexCash] = globals()[indexCash].drop(con.allBaseNameOrder,axis=1)
+
+
+
+
+'''
 按规则参数生成股票数据
 '''
 
@@ -465,12 +544,13 @@ def make_stockData_by_choose(stockArgX):
     ruleNumListChoose = stockArgX.ruleNumListChoose
     ruleNumListMust = stockArgX.ruleNumListMust
     '''
-    1.创建 可选规则 的所有组合
+    1.1 创建 股票可选规则 的所有组合
     '''
     ChooseCombinations = commonUtil.get_all_combinations(ruleNumListChoose)
 
+
     '''
-    2.加载输入规则集合的属性信息
+    2.1 加载股票 输入规则集合的属性信息
     '''
     # 生成 可选和必选规则的 集合list
     allList = ruleNumListChoose + ruleNumListMust
@@ -480,19 +560,29 @@ def make_stockData_by_choose(stockArgX):
     ruleList = get_all_rule(allList)
 
     '''
-    3.获取base.csv中所有的code 放入缓存中
+    3.获取base.csv中所有的code
     '''
     baseCodeList = bs.put_base_csv_code_into_cash()
 
     '''
-    4.获取所有的stock数据命名放入内存中,返回stock内存数据名称list
+    4.1获取所有的stock数据命名放入内存中,返回stock内存数据名称list
     '''
     stockCashList = put_all_stock_into_cash(baseCodeList)
+    '''
+    4.2获取所有的index数据放入内存中
+    '''
+    indexCashList = put_all_index_into_cash()
+    '''
+    4.3为所有指数增加规则TRUE FALSE
+    '''
+    add_ruleTF_for_index(indexCashList,allList)
+
 
     '''
-    5.为当前所有stock增加股票规则标记
+    5.1 为当前所有stock增加股票规则标记
     '''
     add_stock_mark(stockCashList, allList)
+
 
     '''
     6.循环规则组合与股票标记一一对应 生成detail和total报表
