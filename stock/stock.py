@@ -76,7 +76,7 @@ def start_stock_generator():
     stockArg1 = stockArg()
     stockArg1.totalCsvName = '测试'
     stockArg1.ruleNumListChoose = [10]
-    stockArg1.ruleNumListMust = [1, 19, 7,10001]
+    stockArg1.ruleNumListMust = [1, 19, 7]
     stockArg1.detail = True
     stockArg1.mean = False
     stockArg1.dateRangeTF = False
