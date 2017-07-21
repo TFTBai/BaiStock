@@ -81,6 +81,7 @@ def start_stock_generator():
     stockArg1.mean = False
     stockArg1.dateRangeTF = False
     stockArg1.dateRange = '2017-05-01'
+    stockArg1.indexOpen = True
 
     # 执行规则数据生成器方法
     rule.make_stockData_by_choose(stockArg1)

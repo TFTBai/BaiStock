@@ -378,17 +378,20 @@ def use_the_choose_rule(df, list):
 '''
 
 
-def add_stock_mark(stockCashList, allList):
+def add_stock_mark(stockCashList, allList,stockArgX):
+    count = 0
     for stockCash in stockCashList:
+        count = count + 1
+        print('开始为' + stockCash + '缓存增加规则TF,当前的数量是' + str(count))
         globals()[stockCash] = use_the_choose_rule(globals()[stockCash], allList)
-
-        '''
-        对股票做大盘指数规则附加
-        '''
-        #获取股票代码的前两位
-        stockCode = stockCash[9:11]
-        dfIndex = get_right_indexCash(stockCode)
-        globals()[stockCash] = pd.merge(globals()[stockCash], dfIndex, how='left', on=['date'])
+        if(stockArgX.indexOpen):
+            '''
+            对股票做大盘指数规则附加
+            '''
+            #获取股票代码的前两位
+            stockCode = stockCash[9:11]
+            dfIndex = get_right_indexCash(stockCode)
+            globals()[stockCash] = pd.merge(globals()[stockCash], dfIndex, how='left', on=['date'])
 
 '''
 开始生成符合规则的股票数据,根据股票标记与规则一一对应筛选
@@ -581,7 +584,7 @@ def make_stockData_by_choose(stockArgX):
     '''
     5.1 为当前所有stock增加股票规则标记
     '''
-    add_stock_mark(stockCashList, allList)
+    add_stock_mark(stockCashList, allList ,stockArgX)
 
 
     '''
