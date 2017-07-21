@@ -1,0 +1,1 @@
+生成的detail和total文件
