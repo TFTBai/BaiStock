@@ -168,6 +168,86 @@ def get_total_csv(rightStock, dfname, stockArgX):
     gc.collect()
     return totalProfit
 
+'''
+生成某规则的total报表数据
+
+'''
+
+def get_total_csv_by_year(rightStock, ruleName, stockArgX,totalReportForm):
+
+
+    rightStockList = []
+
+    '''
+    先进行按年划分
+    '''
+
+    rightStock1 = rightStock[rightStock['date'] >= '2010-01-01']
+    rightStock1 = rightStock1[rightStock1['date'] < '2011-01-01']
+
+    rightStock2 = rightStock[rightStock['date'] >= '2011-01-01']
+    rightStock2 = rightStock2[rightStock2['date'] < '2012-01-01']
+
+    rightStock3 = rightStock[rightStock['date'] >= '2012-01-01']
+    rightStock3 = rightStock3[rightStock3['date'] < '2013-01-01']
+
+    rightStock4 = rightStock[rightStock['date'] >= '2013-01-01']
+    rightStock4 = rightStock4[rightStock4['date'] < '2014-01-01']
+
+    rightStock5 = rightStock[rightStock['date'] >= '2014-01-01']
+    rightStock5 = rightStock5[rightStock5['date'] < '2015-01-01']
+
+    rightStock6 = rightStock[rightStock['date'] >= '2015-01-01']
+    rightStock6 = rightStock6[rightStock6['date'] < '2016-01-01']
+
+    rightStock7 = rightStock[rightStock['date'] >= '2016-01-01']
+    rightStock7 = rightStock7[rightStock7['date'] < '2017-01-01']
+
+    rightStock8 = rightStock[rightStock['date'] >= '2017-01-01']
+    rightStock8 = rightStock8[rightStock8['date'] < '2018-01-01']
+
+    rightStockList.append(rightStock1)
+    rightStockList.append(rightStock2)
+    rightStockList.append(rightStock3)
+    rightStockList.append(rightStock4)
+    rightStockList.append(rightStock5)
+    rightStockList.append(rightStock6)
+    rightStockList.append(rightStock7)
+    rightStockList.append(rightStock8)
+    year = -1
+    '''
+    再循环添加对应的数据
+    '''
+    for rightStockX in rightStockList:
+        year = year+1
+        if len(rightStockX) >= 0:
+            ruleNameyear = ruleName+'year201'+str(year)
+            ruleNamelist = [ruleNameyear]
+            totalProfit = pd.DataFrame({'rule': ruleNamelist})
+
+            totalProfit = add_right_count(totalProfit, rightStockX)
+            rightStockX = group_by_date(rightStockX)
+            # 是否生产中间表
+            if (stockArgX.mean):
+                rightStockX.to_csv(con.detailPath + str(
+                    dateUtil.get_date_date()) + dateUtil.get_hour_and_minute_str() + ruleNameyear + 'mean.csv',
+                                  index=False)
+            # 增加筛选规则对应的样本数量和百分百显示
+            totalProfit = add_right_count_by_date(totalProfit, rightStockX)
+            # 计算并且增加 评价收益
+            totalProfit = add_income_mean(totalProfit, rightStockX)
+            totalProfit = add_days_income_percent(totalProfit, rightStockX)
+            totalReportForm.append(totalProfit)
+            # 清除临时detail缓存
+            del rightStockX
+            # 马上重置垃圾清除器
+            gc.collect()
+    del rightStock
+    # 马上重置垃圾清除器
+    gc.collect()
+    return totalReportForm
+
+
 
 '''
 生成detail报表

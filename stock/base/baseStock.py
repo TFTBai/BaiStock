@@ -31,10 +31,10 @@ def create_all_stock_csv():
     allCode = get_all_code()
     # 循环当前所有stock 生成所有stock本地csv
     for code in allCode.code:
-        # if (code == 600675):
-        codeStr = str(code).zfill(6)
-        # 查询单stock历史所有数据
-        create_stock_csv(codeStr)
+        # if (code == 1):
+            codeStr = str(code).zfill(6)
+            # 查询单stock历史所有数据
+            create_stock_csv(codeStr)
     log.info("所有stock基础数据生成完毕!")
 
 
@@ -72,18 +72,18 @@ def add_stock_derivative_data():
     allCode = get_all_code()
     # 2.循环所有的csv文件
     for code in allCode.code:
-        # if (code == 600675):
-        count = count + 1
-        codeStr = str(code).zfill(6)
-        # 3.读取本地csv数据
-        stock_data = pd.read_csv(con.csvPath + codeStr + '.csv')
-        # 近期数据补全
-        stock_data = cal.get_lost_data(stock_data, codeStr, False)
-        # 增加衍生数据
-        stock_data = add_derivative_data(stock_data)
-        # 7.将计算好的kdj写入对应csv中
-        stock_data.to_csv(con.csvPath + codeStr + '.csv', index=False)
-        log.info('已生成代码' + codeStr + '的衍生数据,生成总数量' + str(count))
+        # if (code == 1):
+            count = count + 1
+            codeStr = str(code).zfill(6)
+            # 3.读取本地csv数据
+            stock_data = pd.read_csv(con.csvPath + codeStr + '.csv')
+            # 近期数据补全
+            stock_data = cal.get_lost_data(stock_data, codeStr, False)
+            # 增加衍生数据
+            stock_data = add_derivative_data(stock_data)
+            # 7.将计算好的kdj写入对应csv中
+            stock_data.to_csv(con.csvPath + codeStr + '.csv', index=False)
+            log.info('已生成代码' + codeStr + '的衍生数据,生成总数量' + str(count))
     log.info("为所有的stock增加衍生数据完毕!")
 
 
@@ -118,7 +118,7 @@ def update_all_stock():
     allCode = get_all_code()
     # 2.循环所有的csv文件
     for code in allCode.code:
-        # if (code == 600675):
+        # if (code == 1):
             count = count + 1
             codeStr = str(code).zfill(6)
             # 3.读取本地csv数据
@@ -149,7 +149,11 @@ def put_base_csv_code_into_cash():
     # 1.读取base文件获取所有的csv文件名=code
     allCode = get_all_code()
     # 2.循环所有的code
+    count = 0
     for code in allCode.code:
+        count = count+1
+        if count > 100:
+          return baseCodeList
         codeStr = str(code).zfill(6)
         baseCodeList.append(codeStr)
     return baseCodeList
@@ -174,5 +178,4 @@ def create_all_index_csv():
         log.info("当前开始生成指数" + codeStr + "的CSV文件!")
         index_data = ts.get_k_data(codeStr, index=True, start='2010-01-01', end='2016-12-31')
         index_data.to_csv(con.indexCsvPath + codeStr + '.csv', index=False, encoding='utf-8')
-
 

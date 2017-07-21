@@ -76,12 +76,14 @@ def start_stock_generator():
     stockArg1 = stockArg()
     stockArg1.totalCsvName = '测试'
     stockArg1.ruleNumListChoose = [10]
-    stockArg1.ruleNumListMust = [1, 19, 7]
+    stockArg1.ruleNumListMust = [19]
     stockArg1.detail = True
     stockArg1.mean = False
     stockArg1.dateRangeTF = False
     stockArg1.dateRange = '2017-05-01'
-    stockArg1.indexOpen = True
+    stockArg1.indexOpen = False
+    stockArg1.groupByDaysTF = True
+    stockArg1.groupByDays = 365
 
     # 执行规则数据生成器方法
     rule.make_stockData_by_choose(stockArg1)

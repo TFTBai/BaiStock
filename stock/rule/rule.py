@@ -471,12 +471,22 @@ def generate_report_form(ChooseCombinations, ruleNumListMust, ruleList, stockCas
             '''
             tempDetail = view.generate_detail_csv(detailTempList, stockArgX, ruleName)
 
-            '''
-            开始生成某规则的收益total数据
-            '''
-            totalProfit = view.get_total_csv(tempDetail, ruleName, stockArgX)
-            # 将某规则的收益total数据添加到total报表中
-            totalReportForm = totalReportForm.append(totalProfit)
+            if (stockArgX.groupByDaysTF):
+                '''
+                开始生成某规则的收益total数据
+                '''
+                totalReportForm = view.get_total_csv_by_year(tempDetail, ruleName, stockArgX,totalReportForm)
+            else:
+                '''
+                开始生成某规则的收益total数据
+                '''
+                totalProfit = view.get_total_csv(tempDetail, ruleName, stockArgX)
+
+                '''
+                开始按年生成某规则的收益total数据
+                '''
+                # 将某规则的收益total数据添加到total报表中
+                totalReportForm = totalReportForm.append(totalProfit)
 
     print('生成totalcsv文件开始!')
     dateUtil.print_date()
