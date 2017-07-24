@@ -98,7 +98,7 @@ def add_index_derivative_data():
         # 3.读取本地csv数据
         stock_data = pd.read_csv(con.indexCsvPath + codeStr + '.csv')
         # 近期数据补全
-        stock_data = cal.get_lost_data(stock_data, codeStr, False)
+        stock_data = cal.get_lost_data(stock_data, codeStr, True)
         # 增加衍生数据
         stock_data = add_derivative_data(stock_data)
         # 7.将计算好的kdj写入对应csv中
