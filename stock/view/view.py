@@ -220,7 +220,7 @@ def get_total_csv_by_year(rightStock, ruleName, stockArgX,totalReportForm):
     '''
     for rightStockX in rightStockList:
         year = year+1
-        if len(rightStockX) >= 0:
+        if len(rightStockX) > 0:
             ruleNameyear = ruleName+'year201'+str(year)
             ruleNamelist = [ruleNameyear]
             totalProfit = pd.DataFrame({'rule': ruleNamelist})
@@ -237,7 +237,7 @@ def get_total_csv_by_year(rightStock, ruleName, stockArgX,totalReportForm):
             # 计算并且增加 评价收益
             totalProfit = add_income_mean(totalProfit, rightStockX)
             totalProfit = add_days_income_percent(totalProfit, rightStockX)
-            totalReportForm.append(totalProfit)
+            totalReportForm = totalReportForm.append(totalProfit)
             # 清除临时detail缓存
             del rightStockX
             # 马上重置垃圾清除器

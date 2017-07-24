@@ -465,7 +465,8 @@ def generate_report_form(ChooseCombinations, ruleNumListMust, ruleList, stockCas
             开始生成复合规则的股票数据,根据股票标记与规则一一对应筛选
             '''
             detailTempList = get_TF_stock(stockCashList, brackets, ruleList)
-
+            if(len(detailTempList)<=0):
+                continue
             '''
             开始生成detail.csv报表
             '''
