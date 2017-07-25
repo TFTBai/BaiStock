@@ -333,13 +333,19 @@ def use_the_choose_rule(df, list):
     规则16:rsi小于40
     '''
     if (isChooseRule(ruleId, list)):
-        df['rsi小于某值'] = (df['rsi6'] < 40) & (df['rsi12'] < 40) & (df['rsi24'] < 40)
+        df['rsi小于某值'] = (df['2days'] / df['60days'] < 0.74) & (df['close'] / df['30days'] < 0.82) & (
+        df['rsi6'] < 45) & (df['rsi12'] < 45) & (df['rsi24'] < 45) & (df['rsi6'] > df['rsi6'].shift()) & (
+                            df['rsi12'] > df['rsi12'].shift()) & (df['rsi24'] > df['rsi24'].shift()) & (
+                        df['rsi6'] > 30) & (
+                            df['rsi12'] > 30) & (df['rsi24'] > 30) & (df['close'] > df['close'].shift())
 
     '''
     规则17:低开
     '''
     if (isChooseRule(ruleId, list)):
-        df['低开'] = df['open'] / df['close'].shift() < 0.95
+        df['低开'] = (df['close'] / df['close'].shift() > 1.055) & (
+        df['close'].shift() / df['close'].shift(2) > 1.055) & (
+                       df['close'].shift(2) / df['close'].shift(3) > 1.055) & (df['2days'] / df['60days'] < 0.95)
 
     '''
     规则18:交易量猛增

@@ -12,7 +12,7 @@ from common import dateUtil
 
 def init_csv():
     startDate = dateUtil.print_date()
-    bs.create_base()
+    # bs.create_base()
     bs.create_all_stock_csv()
     bs.create_all_index_csv()
     bs.add_index_derivative_data()
@@ -77,7 +77,7 @@ def start_stock_generator():
     stockArg1.totalCsvName = '今日筛选'
     stockArg1.ruleNumListChoose = [10]
     stockArg1.ruleNumListMust = [1,7,19]
-    stockArg1.detail = False
+    stockArg1.detail = True
     stockArg1.mean = False
     stockArg1.dateRangeTF = False
     stockArg1.dateRange = '2017-05-01'
