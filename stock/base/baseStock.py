@@ -45,7 +45,7 @@ def add_derivative_data(stock_data):
     # 1.添加d1开/d0收值
     stock_data = cal.get_d1od0c(stock_data)
     # 2.添加2、5、10、20、30、60日线
-    stock_data = cal.get_30days(stock_data)
+    stock_data = cal.get_days(stock_data)
     # 3.添加kdj数据
     stock_data = cal.get_kdj(stock_data)
     # 4.添加macd值
@@ -55,6 +55,7 @@ def add_derivative_data(stock_data):
     # 6.添加收益
     stock_data = cal.get_firstDay_income(stock_data)
     # 7.添加交易量5、10、30日线
+    stock_data = cal.add_volume_days(stock_data)
     return stock_data
 
 '''
