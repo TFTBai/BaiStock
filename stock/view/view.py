@@ -206,6 +206,7 @@ def get_total_csv_by_year(rightStock, ruleName, stockArgX,totalReportForm):
     rightStock8 = rightStock[rightStock['date'] >= '2017-01-01']
     rightStock8 = rightStock8[rightStock8['date'] < '2018-01-01']
 
+    rightStockList.append(rightStock)
     rightStockList.append(rightStock1)
     rightStockList.append(rightStock2)
     rightStockList.append(rightStock3)
@@ -214,7 +215,8 @@ def get_total_csv_by_year(rightStock, ruleName, stockArgX,totalReportForm):
     rightStockList.append(rightStock6)
     rightStockList.append(rightStock7)
     rightStockList.append(rightStock8)
-    year = -1
+
+    year = -2
     '''
     再循环添加对应的数据
     '''
@@ -222,6 +224,9 @@ def get_total_csv_by_year(rightStock, ruleName, stockArgX,totalReportForm):
         year = year+1
         if len(rightStockX) > 0:
             ruleNameyear = ruleName+'year201'+str(year)
+            #如果是全部的rightStock 则重新命名为 year
+            if(year ==-1):
+                ruleNameyear = ruleName+'year'
             ruleNamelist = [ruleNameyear]
             totalProfit = pd.DataFrame({'rule': ruleNamelist})
 

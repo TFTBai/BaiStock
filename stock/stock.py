@@ -77,7 +77,7 @@ def start_stock_generator():
     stockArg1.totalCsvName = '今日筛选'
     stockArg1.ruleNumListChoose = [1,7]
     stockArg1.ruleNumListMust = [10]
-    stockArg1.detail = True
+    stockArg1.detail = False
     stockArg1.mean = False
     stockArg1.dateRangeTF = False
     stockArg1.dateRange = '2017-05-01'
@@ -88,3 +88,4 @@ def start_stock_generator():
     rule.make_stockData_by_choose(stockArg1)
 
     dateUtil.print_end_date(startDate)
+start_stock_generator()
