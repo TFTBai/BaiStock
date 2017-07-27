@@ -75,8 +75,8 @@ def start_stock_generator():
     # 参数组合1
     stockArg1 = stockArg()
     stockArg1.totalCsvName = '今日筛选'
-    stockArg1.ruleNumListChoose = [10]
-    stockArg1.ruleNumListMust = [17]
+    stockArg1.ruleNumListChoose = [1,7]
+    stockArg1.ruleNumListMust = [10]
     stockArg1.detail = True
     stockArg1.mean = False
     stockArg1.dateRangeTF = False

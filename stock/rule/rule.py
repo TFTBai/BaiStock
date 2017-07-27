@@ -351,7 +351,8 @@ def use_the_choose_rule(df, list):
     规则18:交易量猛增
     '''
     if (isChooseRule(ruleId, list)):
-        df['交易量猛增'] = df['volume'] / df['volume'].shift() > 3
+        df['交易量猛增'] = (df['close'] / df['close'].shift() > 1.025) & (df['close'].shift() / df['close'].shift(2) > 1.025) & (
+    df['close'].shift(2) / df['close'].shift(3) < 0.955) & (df['low'] / df['close'] > 0.98)
 
     '''
     规则19：收盘价大于前一天
