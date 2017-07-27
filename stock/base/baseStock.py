@@ -42,18 +42,19 @@ def create_all_stock_csv():
 增加衍生数据
 '''
 def add_derivative_data(stock_data):
-    # 天假d1开/d0收值
+    # 1.添加d1开/d0收值
     stock_data = cal.get_d1od0c(stock_data)
-    # 添加5、10、20、30、60日线
+    # 2.添加2、5、10、20、30、60日线
     stock_data = cal.get_30days(stock_data)
-    # # 4.计算每一个stock的kdj数据
+    # 3.添加kdj数据
     stock_data = cal.get_kdj(stock_data)
-    # 5.计算么一个stock的macd值
+    # 4.添加macd值
     stock_data = cal.get_macd(stock_data)
-    # 6.计算每一个stock的rsi值
+    # 5.添加rsi值
     stock_data = cal.get_rsi(stock_data)
-    # 添加收益
+    # 6.添加收益
     stock_data = cal.get_firstDay_income(stock_data)
+    # 7.添加交易量5、10、30日线
     return stock_data
 
 '''
@@ -118,22 +119,15 @@ def update_all_stock():
     allCode = get_all_code()
     # 2.循环所有的csv文件
     for code in allCode.code:
-        # if (code == 1):
+        if (code == 1):
             count = count + 1
             codeStr = str(code).zfill(6)
             # 3.读取本地csv数据
             stock_data = pd.read_csv(con.csvPath + codeStr + '.csv')
+            allBaseNameOrder = ['date']
+            allBaseNameOrder = allBaseNameOrder+con.allBaseNameOrder
             # 输出到csv
-            stock_data.to_csv(con.csvPath + codeStr + '.csv', index=False,
-                              columns=['date', 'code', 'open', 'close', 'high', 'low', 'volume', 'day1o/day0c',
-                                       'day1highIncome', 'day1closeIncome',
-                                       'day2highIncome', 'day2closeIncome', 'day3highIncome',
-                                       'day3closeIncome', 'day4highIncome', 'day4closeIncome',
-                                       'day5highIncome', 'day5closeIncome', 'day6highIncome', 'day6closeIncome', '2days',
-                                       '5days',
-                                       '30days', '60days',
-                                       'kdj_k', 'kdj_d', 'kdj_j', 'macd', 'macd_DIFF', 'macd_DEA', 'rsi6', 'rsi12',
-                                       'rsi24'])
+            stock_data.to_csv(con.csvPath + codeStr + '.csv', index=False,columns=allBaseNameOrder)
             log.info('已重新生成' + codeStr + '的stock数据,生成总数量' + str(count))
     log.info("所有stock数据更新完毕!")
 
