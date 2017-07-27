@@ -55,7 +55,7 @@ def add_derivative_data(stock_data):
     # 6.添加收益
     stock_data = cal.get_firstDay_income(stock_data)
     # 7.添加交易量5、10、30日线
-    stock_data = cal.add_volume_days(stock_data)
+    stock_data = cal.add_volume_date_line(stock_data)
     return stock_data
 
 '''
@@ -120,7 +120,7 @@ def update_all_stock():
     allCode = get_all_code()
     # 2.循环所有的csv文件
     for code in allCode.code:
-        if (code == 1):
+        # if (code == 1):
             count = count + 1
             codeStr = str(code).zfill(6)
             # 3.读取本地csv数据

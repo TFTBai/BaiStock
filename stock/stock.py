@@ -88,4 +88,3 @@ def start_stock_generator():
     rule.make_stockData_by_choose(stockArg1)
 
     dateUtil.print_end_date(startDate)
-start_stock_generator()

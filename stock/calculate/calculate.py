@@ -50,6 +50,15 @@ def get_date_line(stock_data):
     stock_data['60days'] = round(pd.rolling_mean(stock_data['close'], 60), 2)
     return stock_data
 
+'''
+获取5、10、30交易量日线
+'''
+def add_volume_date_line(stock_data):
+    stock_data['volume5days'] = round(pd.rolling_mean(stock_data['volume'], 5), 2)
+    stock_data['volume10days'] = round(pd.rolling_mean(stock_data['volume'], 10), 2)
+    stock_data['volume30days'] = round(pd.rolling_mean(stock_data['volume'], 30), 2)
+    return stock_data
+
 
 '''
 1.获取6天 最高收益 收盘收益
