@@ -43,7 +43,7 @@ def get_rsi(stock_data):
 
 
 # 获取5、30、60日线数据
-def get_days(stock_data):
+def get_date_line(stock_data):
     stock_data['2days'] = round(pd.rolling_mean(stock_data['close'], 2), 2)
     stock_data['5days'] = round(pd.rolling_mean(stock_data['close'], 5), 2)
     stock_data['30days'] = round(pd.rolling_mean(stock_data['close'], 30), 2)

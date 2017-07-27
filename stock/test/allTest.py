@@ -30,7 +30,7 @@ def testforBuy():
 def testIncome():
     stock_data = pd.read_csv(con.csvPath + '603999.csv')
     # 添加30日线
-    stock_data = cal.get_days(stock_data)
+    stock_data = cal.get_date_line(stock_data)
     # 添加收益
     stock_data = cal.get_income(stock_data)
     # 输出到csv
