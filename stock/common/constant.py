@@ -13,7 +13,8 @@ shenIndexBegin = '00'
 chuangIndexBegin = '30'
 shangIndexBegin = '60'
 shangBIndexBegin = '90'
-allBaseNameOrder = ['code', 'open', 'close', 'high', 'low', 'volume', 'volume5days', 'volume10days', 'volume30days',
+allBaseNameOrder = ['code', 'open', 'close', 'high', 'low', 'price_change', 'p_change', 'volume', 'volume5days',
+                    'volume10days', 'volume30days',
                     'day1o/day0c', 'day1highIncome', 'day1closeIncome', 'day2highIncome', 'day2closeIncome',
                     'day3highIncome', 'day3closeIncome',
                     'day4highIncome', 'day4closeIncome', 'day5highIncome', 'day5closeIncome', 'day6highIncome',

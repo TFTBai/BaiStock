@@ -59,6 +59,21 @@ def add_volume_date_line(stock_data):
     stock_data['volume30days'] = round(pd.rolling_mean(stock_data['volume'], 30), 2)
     return stock_data
 
+'''
+获取价格变动
+'''
+def add_price_change(stock_data):
+    stock_data['price_change'] = round(stock_data['close']-stock_data['close'].shift(), 2)
+    return stock_data
+
+'''
+获取涨跌幅
+'''
+def add_p_change(stock_data):
+    stock_data['p_change'] = round((stock_data['close']/stock_data['close'].shift())-1, 2)
+    return stock_data
+
+
 
 '''
 1.获取6天 最高收益 收盘收益

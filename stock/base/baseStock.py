@@ -56,6 +56,10 @@ def add_derivative_data(stock_data):
     stock_data = cal.get_firstDay_income(stock_data)
     # 7.添加交易量5、10、30日线
     stock_data = cal.add_volume_date_line(stock_data)
+    # 8.添加价格变动
+    stock_data = cal.add_price_change(stock_data)
+    # 9.添加涨跌幅
+    stock_data = cal.add_p_change(stock_data)
     return stock_data
 
 '''
