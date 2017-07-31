@@ -2,6 +2,8 @@ import sys
 from operator import add
 from pyspark import SparkContext
 
+from pyspark.sql import HiveContext, Row
+
 if __name__ == "__main__":
     sc = SparkContext(appName="PythonWordCount")
     lines = sc.textFile("words.txt")

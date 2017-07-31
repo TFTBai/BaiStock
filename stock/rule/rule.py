@@ -47,6 +47,7 @@ def get_all_index_rule(allList):
         ruleList.append(locals()['rule' + str(num)])
     return ruleList
 
+
 def get_all_rule(allList):
     class rule:
         num = 0
@@ -183,21 +184,26 @@ def isChooseRule(ruleNum, list):
         return True
     else:
         return False
+
+
 '''
 根据股票代码,获取对应的指数缓存
 '''
+
+
 def get_right_indexCash(codeStr):
     indexCashName = 'indexCash'
-    if(con.shenIndexBegin == codeStr):
-        indexCashName = indexCashName+con.shenIndex
-    if(con.chuangIndexBegin == codeStr):
-        indexCashName = indexCashName+con.chuangIndex
-    if(con.shangIndexBegin == codeStr):
-        indexCashName = indexCashName+con.shangIndex
-    if(con.shangBIndexBegin == codeStr):
-        indexCashName = indexCashName+con.shangIndex
+    if (con.shenIndexBegin == codeStr):
+        indexCashName = indexCashName + con.shenIndex
+    if (con.chuangIndexBegin == codeStr):
+        indexCashName = indexCashName + con.chuangIndex
+    if (con.shangIndexBegin == codeStr):
+        indexCashName = indexCashName + con.shangIndex
+    if (con.shangBIndexBegin == codeStr):
+        indexCashName = indexCashName + con.shangIndex
     dfIndex = globals()[indexCashName]
     return dfIndex
+
 
 def use_the_index_choose_rule(dfIndex, list):
     ruleId = [10000]
@@ -207,6 +213,7 @@ def use_the_index_choose_rule(dfIndex, list):
     if (isChooseRule(ruleId, list)):
         dfIndex['大盘规则1'] = dfIndex['macd'] > dfIndex['macd'].shift()
     return dfIndex
+
 
 '''
 给stock增加技术指标标记
@@ -320,14 +327,19 @@ def use_the_choose_rule(df, list):
     rsi金叉
     '''
     if (isChooseRule(ruleId, list)):
-        df['rsi金叉'] = (df['rsi6'].shift() < df['rsi24'].shift()) & (df['rsi6'] >= df['rsi24'])
-
+        df['rsi金叉'] = (df['2days'] / df['60days'] < 0.78) & (df['close'] / df['30days'] < 0.86) & (
+        df['rsi6'] < 45) & (df['rsi12'] < 45) & (df['rsi24'] < 45) & (df['rsi6'] > df['rsi6'].shift()) & (
+                            df['rsi12'] > df['rsi12'].shift()) & (df['rsi24'] > df['rsi24'].shift()) & (
+                        df['rsi6'] > 30) & (
+                            df['rsi12'] > 30) & (df['rsi24'] > 30) & (df['close'] > df['close'].shift())
     '''
     规则 15
     rsi死叉
     '''
     if (isChooseRule(ruleId, list)):
-        df['rsi死叉'] = (df['rsi6'].shift() > df['rsi24'].shift()) & (df['rsi6'] <= df['rsi24'])
+        df['rsi死叉'] = (df['close'] / df['close'].shift() > 1.045) & (
+        df['close'].shift() / df['close'].shift(2) > 1.045) & (
+                       df['close'].shift(2) / df['close'].shift(3) > 1.045)
 
     '''
     规则16:rsi小于40
@@ -345,33 +357,34 @@ def use_the_choose_rule(df, list):
     if (isChooseRule(ruleId, list)):
         df['低开'] = (df['close'] / df['close'].shift() > 1.055) & (
         df['close'].shift() / df['close'].shift(2) > 1.055) & (
-                       df['close'].shift(2) / df['close'].shift(3) > 1.055) & (df['2days'] / df['60days'] < 0.95)
+                       df['close'].shift(2) / df['close'].shift(3) > 1.055)
 
     '''
     规则18:交易量猛增
     '''
     if (isChooseRule(ruleId, list)):
         df['交易量猛增'] = (df['close'] / df['close'].shift() > 1.025) & (df['close'].shift() / df['close'].shift(2) > 1.025) & (
-    df['close'].shift(2) / df['close'].shift(3) < 0.955) & (df['low'] / df['close'] > 0.98)
+    df['close'].shift(2) / df['close'].shift(3) < 0.955)
 
     '''
     规则19：收盘价大于前一天
     '''
     if (isChooseRule(ruleId, list)):
-        df['收盘价大于前一天'] = (df['close'] > df['close'].shift())
+        df['收盘价大于前一天'] = (df['low'] / df['close'] > 0.995)
 
     '''
     规则20：日线大于前一天
     '''
     if (isChooseRule(ruleId, list)):
-        df['日线大于前一天'] = (df['5days'] > df['5days'].shift()) & (df['10days'] > df['10days'].shift()) & (
-        df['20days'] > df['20days'].shift()) & (df['30days'] > df['30days'].shift())
+        df['日线大于前一天'] = (df['high'] / df['close'] < 1.01)
 
     '''
     规则21：日线成多头排列
     '''
     if (isChooseRule(ruleId, list)):
-        df['日线成多头排列'] = (df['5days'] > df['10days']) & (df['10days'] > df['20days']) & (df['20days'] > df['30days'])
+        df['日线成多头排列'] = (df['volume5days'] / df['volume30days'] < 0.975) & (
+            df['volume10days'] / df['volume30days'] < 0.975) & (
+            df['volume5days'] / df['volume10days'] < 0.975)
 
     '''
     规则22：日线紧密排列
@@ -380,25 +393,27 @@ def use_the_choose_rule(df, list):
         df['日线紧密排列'] = (df['5days']/df['10days']<1.005) & (df['10days']/df['20days']<1.005) & (df['20days']/df['30days']<1.005)
     return df
 
+
 '''
 增加股票规则标记
 '''
 
 
-def add_stock_mark(stockCashList, allList,stockArgX):
+def add_stock_mark(stockCashList, allList, stockArgX):
     count = 0
     for stockCash in stockCashList:
         count = count + 1
         print('开始为' + stockCash + '缓存增加规则TF,当前的数量是' + str(count))
         globals()[stockCash] = use_the_choose_rule(globals()[stockCash], allList)
-        if(stockArgX.indexOpen):
+        if (stockArgX.indexOpen):
             '''
             对股票做大盘指数规则附加
             '''
-            #获取股票代码的前两位
+            # 获取股票代码的前两位
             stockCode = stockCash[9:11]
             dfIndex = get_right_indexCash(stockCode)
             globals()[stockCash] = pd.merge(globals()[stockCash], dfIndex, how='left', on=['date'])
+
 
 '''
 开始生成符合规则的股票数据,根据股票标记与规则一一对应筛选
@@ -472,7 +487,7 @@ def generate_report_form(ChooseCombinations, ruleNumListMust, ruleList, stockCas
             开始生成复合规则的股票数据,根据股票标记与规则一一对应筛选
             '''
             detailTempList = get_TF_stock(stockCashList, brackets, ruleList)
-            if(len(detailTempList)<=0):
+            if (len(detailTempList) <= 0):
                 continue
             '''
             开始生成detail.csv报表
@@ -483,7 +498,7 @@ def generate_report_form(ChooseCombinations, ruleNumListMust, ruleList, stockCas
                 '''
                 开始生成某规则的收益total数据
                 '''
-                totalReportForm = view.get_total_csv_by_year(tempDetail, ruleName, stockArgX,totalReportForm)
+                totalReportForm = view.get_total_csv_by_year(tempDetail, ruleName, stockArgX, totalReportForm)
             else:
                 '''
                 开始生成某规则的收益total数据
@@ -545,15 +560,17 @@ def put_all_index_into_cash():
         # 3.读取本地csv数据放入全局变量中
         globals()[indexCash] = pd.read_csv(con.indexCsvPath + codeStr + '.csv')
     return indexCashList
+
+
 '''
 为每一个指数基础数据增加规则TF标记后,去掉基础数据
 '''
-def add_ruleTF_for_index(indexCashList,allList):
+
+
+def add_ruleTF_for_index(indexCashList, allList):
     for indexCash in indexCashList:
-        globals()[indexCash] = use_the_index_choose_rule(globals()[indexCash],allList)
-        globals()[indexCash] = globals()[indexCash].drop(con.allBaseNameOrder,axis=1)
-
-
+        globals()[indexCash] = use_the_index_choose_rule(globals()[indexCash], allList)
+        globals()[indexCash] = globals()[indexCash].drop(con.allBaseNameOrder, axis=1)
 
 
 '''
@@ -568,7 +585,6 @@ def make_stockData_by_choose(stockArgX):
     1.1 创建 股票可选规则 的所有组合
     '''
     ChooseCombinations = commonUtil.get_all_combinations(ruleNumListChoose)
-
 
     '''
     2.1 加载股票 输入规则集合的属性信息
@@ -596,14 +612,12 @@ def make_stockData_by_choose(stockArgX):
     '''
     4.3为所有指数增加规则TRUE FALSE
     '''
-    add_ruleTF_for_index(indexCashList,allList)
-
+    add_ruleTF_for_index(indexCashList, allList)
 
     '''
     5.1 为当前所有stock增加股票规则标记
     '''
-    add_stock_mark(stockCashList, allList ,stockArgX)
-
+    add_stock_mark(stockCashList, allList, stockArgX)
 
     '''
     6.循环规则组合与股票标记一一对应 生成detail和total报表

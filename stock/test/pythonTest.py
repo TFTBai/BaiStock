@@ -55,3 +55,19 @@ def jisuanshouyi():
 def get_date_date():
     startDate = datetime.datetime.now().minute
     print(str(startDate))
+
+
+def test_c_num():
+    numlist = [1,2,3,4,5,6,7,8,9,11,12]
+    listAll = []
+    count = 0
+    for i in range(1, len(numlist) + 1):
+        iter = itertools.combinations(numlist, i)
+        listAll.append(list(iter))
+    for inList in listAll:
+        # 2.循环规则数组中的每一个,
+        for brackets in inList:
+            count = count + 1
+            print(count)
+
+
