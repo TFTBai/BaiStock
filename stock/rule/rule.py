@@ -382,9 +382,9 @@ def use_the_choose_rule(df, list):
     规则21：日线成多头排列
     '''
     if (isChooseRule(ruleId, list)):
-        df['日线成多头排列'] = (df['volume5days'] / df['volume30days'] < 0.975) & (
-            df['volume10days'] / df['volume30days'] < 0.975) & (
-            df['volume5days'] / df['volume10days'] < 0.975)
+        df['日线成多头排列'] = (df['volume5days'] / df['volume30days'] < 0.95) & (
+            df['volume10days'] / df['volume30days'] < 0.95) & (
+            df['volume5days'] / df['volume10days'] < 0.95)
 
     '''
     规则22：日线紧密排列
