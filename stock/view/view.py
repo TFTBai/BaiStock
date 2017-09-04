@@ -39,15 +39,15 @@ def add_days_income_percent(df, rightStock):
             percentDay = round(pCount / len(ptemp), 2) * 100
         df['day' + str(day) + 'cip'] = percentDay
 
-        ptemp = rightStock['day' + str(day) + 'highIncome']
-        pCount = 0
-        percentDay = 0
-        for p in ptemp:
-            if (p >= 0):
-                pCount = pCount + 1
-        if (pCount != 0):
-            percentDay = round(pCount / len(ptemp), 2) * 100
-        df['day' + str(day) + 'hip'] = percentDay
+        # ptemp = rightStock['day' + str(day) + 'highIncome']
+        # pCount = 0
+        # percentDay = 0
+        # for p in ptemp:
+        #     if (p >= 0):
+        #         pCount = pCount + 1
+        # if (pCount != 0):
+        #     percentDay = round(pCount / len(ptemp), 2) * 100
+        # df['day' + str(day) + 'hip'] = percentDay
 
     return df
 
@@ -67,8 +67,8 @@ def add_income_mean(df, rightStock):
         df['d' + str(day) + 'cMean'] = round(rightStock['day' + str(day) + 'closeIncome'].mean(), 2)
     # for day in con.day_list:
     #     df['d' + str(day) + 'oMean'] = round(rightStock['day' + str(day) + 'openIncome'].mean(), 2)
-    for day in con.day_list:
-        df['d' + str(day) + 'hMean'] = round(rightStock['day' + str(day) + 'highIncome'].mean(), 2)
+    # for day in con.day_list:
+    #     df['d' + str(day) + 'hMean'] = round(rightStock['day' + str(day) + 'highIncome'].mean(), 2)
     return df
 
 
@@ -152,8 +152,9 @@ def get_total_csv(rightStock, dfname, stockArgX):
     rightStock = group_by_date(rightStock)
     # 是否生产中间表
     if (stockArgX.mean):
-        rightStock.to_csv(con.detailPath + str(dateUtil.get_date_date()) + dateUtil.get_hour_and_minute_str()+ dfname + 'mean.csv',
-                          index=False)
+        rightStock.to_csv(
+            con.detailPath + str(dateUtil.get_date_date()) + dateUtil.get_hour_and_minute_str() + dfname + 'mean.csv',
+            index=False)
     # 增加筛选规则对应的样本数量和百分百显示
     totalProfit = add_right_count_by_date(totalProfit, rightStock)
     # 计算并且增加 评价收益
@@ -168,14 +169,14 @@ def get_total_csv(rightStock, dfname, stockArgX):
     gc.collect()
     return totalProfit
 
+
 '''
 生成某规则的total报表数据
 
 '''
 
-def get_total_csv_by_year(rightStock, ruleName, stockArgX,totalReportForm):
 
-
+def get_total_csv_by_year(rightStock, ruleName, stockArgX, totalReportForm):
     rightStockList = []
 
     '''
@@ -221,12 +222,12 @@ def get_total_csv_by_year(rightStock, ruleName, stockArgX,totalReportForm):
     再循环添加对应的数据
     '''
     for rightStockX in rightStockList:
-        year = year+1
+        year = year + 1
         if len(rightStockX) > 0:
-            ruleNameyear = ruleName+'year201'+str(year)
-            #如果是全部的rightStock 则重新命名为 year
-            if(year ==-1):
-                ruleNameyear = ruleName+'year'
+            ruleNameyear = ruleName + 'year201' + str(year)
+            # 如果是全部的rightStock 则重新命名为 year
+            if (year == -1):
+                ruleNameyear = ruleName + 'year'
             ruleNamelist = [ruleNameyear]
             totalProfit = pd.DataFrame({'rule': ruleNamelist})
 
@@ -236,7 +237,7 @@ def get_total_csv_by_year(rightStock, ruleName, stockArgX,totalReportForm):
             if (stockArgX.mean):
                 rightStockX.to_csv(con.detailPath + str(
                     dateUtil.get_date_date()) + dateUtil.get_hour_and_minute_str() + ruleNameyear + 'mean.csv',
-                                  index=False)
+                                   index=False)
             # 增加筛选规则对应的样本数量和百分百显示
             totalProfit = add_right_count_by_date(totalProfit, rightStockX)
             # 计算并且增加 评价收益
@@ -251,7 +252,6 @@ def get_total_csv_by_year(rightStock, ruleName, stockArgX,totalReportForm):
     # 马上重置垃圾清除器
     gc.collect()
     return totalReportForm
-
 
 
 '''
@@ -271,11 +271,8 @@ def generate_detail_csv(detailTempList, stockArgX, ruleName):
         # 9.是否进行日期筛选
         if (stockArgX.dateRangeTF):
             tempDetail = tempDetail[tempDetail['date'] > stockArgX.dateRange]
-            if len(tempDetail) <= 0:
-                return -1
         # 10.是否生成detail表
-        if (stockArgX.detail):
-            tempDetail.to_csv(con.detailPath + str(
-                dateUtil.get_date_date()) + dateUtil.get_hour_and_minute_str() + ruleName + 'detail.csv',
+        if (stockArgX.detail and len(tempDetail) > 0):
+            tempDetail.to_csv(con.detailPath + str(dateUtil.get_date_date()) + dateUtil.get_hour_and_minute_str() + ruleName + 'detail.csv',
                               index=False)
         return tempDetail

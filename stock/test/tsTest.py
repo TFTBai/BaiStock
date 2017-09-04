@@ -48,3 +48,4 @@ def get_csv():
     df3.to_csv(con.csvPath + 'ffff' + '.csv', index=False, encoding='utf-8')
 
 
+get_hist_data()
