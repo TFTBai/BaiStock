@@ -86,10 +86,10 @@ def get_income(stock_data):
     stock_data['highestDay'] = 1
     # 每一个都跟前一天对比
     for day in con.day_list:
-        # 暂时先去掉日期和日期的开高收价格
+        # 暂时先去掉日期和日期的开收价格
         # stock_data['day' + str(day)] = stock_data['date'].shift(-day)
         # stock_data['day' + str(day) + 'open'] = stock_data['open'].shift(-day)
-        stock_data['day' + str(day) + 'high'] = stock_data['high'].shift(-day)
+        # stock_data['day' + str(day) + 'high'] = stock_data['high'].shift(-day)
         # stock_data['day' + str(day) + 'close'] = stock_data['close'].shift(-day)
         stock_data['day' + str(day) + 'openIncome'] = round(
             stock_data['open'].shift(-day) / stock_data['open'].shift(-day + 1),
@@ -126,14 +126,14 @@ def compensate(stock_data, stock_data_income):
 def get_firstDay_income(stock_data):
     for day in con.day_list:
         # 暂时先去掉日期和日期的开高收价格
-        # stock_data['day' + str(day) + 'highIncome'] = round(
-        #     stock_data['high'].shift(-day) / stock_data['open'].shift(-1),
-        #     4) * 100 - 100
+        stock_data['day' + str(day) + 'highIncome'] = round(
+            stock_data['high'].shift(-day) / stock_data['open'].shift(-1),
+            4) * 100 - 100
         stock_data['day' + str(day) + 'closeIncome'] = round(
             stock_data['close'].shift(-day) / stock_data['open'].shift(-1),
             4) * 100 - 100
     for day in con.day_list:
-        # stock_data = compensate(stock_data, 'day' + str(day) + 'highIncome')
+        stock_data = compensate(stock_data, 'day' + str(day) + 'highIncome')
         stock_data = compensate(stock_data, 'day' + str(day) + 'closeIncome')
     stock_data = stock_data.sort(columns='date')
     return stock_data
@@ -151,3 +151,4 @@ def get_lost_data(stock_data, codeStr, index):
     stock_data_lost = ts.get_k_data(codeStr, index=index)
     stock_data_lost = stock_data_lost[stock_data_lost['date'] > '2016-12-31']
     return stock_data.append(stock_data_lost)
+

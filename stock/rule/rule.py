@@ -33,24 +33,6 @@ from common import dateUtil
 #     return allList
 
 
-
-#
-# def get_all_index_rule(allList):
-#     class rule:
-#         num = 0
-#         name = ''
-#
-#     rule10001 = rule()
-#     rule10001.tf = True
-#     rule10001.num = 10001
-#     rule10001.name = '日线小于30日线的75%'
-#     ruleList = []
-#     # 只把需要的规则加入rulelist中
-#     for num in allList:
-#         ruleList.append(locals()['rule' + str(num)])
-#     return ruleList
-
-
 def get_all_rule(allList):
     class rule:
         num = 0
@@ -164,6 +146,21 @@ def get_all_rule(allList):
     rule22.tf = True
     rule22.num = 22
     rule22.name = '日线紧密排列'
+
+    rule23 = rule()
+    rule23.tf = False
+    rule23.num = 23
+    rule23.name = '30天回本'
+
+    rule24 = rule()
+    rule24.tf = True
+    rule24.num = 24
+    rule24.name = '分组1'
+
+    rule25 = rule()
+    rule25.tf = True
+    rule25.num = 25
+    rule25.name = '分组2'
 
     '''
     以下为大盘规则
@@ -425,6 +422,42 @@ def use_the_choose_rule(df, list):
                         df['rsi6'] > 30) & (
                             df['rsi12'] > 30) & (df['rsi24'] > 30) & (df['close'] / df['close'].shift() > 1.025) & \
                         (df['low'].shift(-1) / df['close'] < 1.095) & (df['close'] / df['close'].shift() > 1.095)
+    '''
+    规则23: 30天回本
+    '''
+    if (isChooseRule(ruleId, list)):
+        df['30天回本'] = \
+                (df['open'].shift(-1) > df['close'].shift(-2) )&\
+                (df['open'].shift(-1) > df['high'].shift(-3) )&\
+                (df['open'].shift(-1) > df['high'].shift(-4) )&\
+                (df['open'].shift(-1) > df['high'].shift(-5) )&\
+                (df['open'].shift(-1) > df['high'].shift(-6) )&\
+                (df['open'].shift(-1) > df['high'].shift(-7) )&\
+                (df['open'].shift(-1) > df['high'].shift(-8) )&\
+                (df['open'].shift(-1) > df['high'].shift(-9) )&\
+                (df['open'].shift(-1) > df['high'].shift(-10))
+                # (df['open'].shift(-1) > df['high'].shift(-11))&\
+                # (df['open'].shift(-1) > df['high'].shift(-12))&\
+                # (df['open'].shift(-1) > df['high'].shift(-13))&\
+                # (df['open'].shift(-1) > df['high'].shift(-14))&\
+                # (df['open'].shift(-1) > df['high'].shift(-15))&\
+                # (df['open'].shift(-1) > df['high'].shift(-16))&\
+                # (df['open'].shift(-1) > df['high'].shift(-17))&\
+                # (df['open'].shift(-1) > df['high'].shift(-18))&\
+                # (df['open'].shift(-1) > df['high'].shift(-19))&\
+                # (df['open'].shift(-1) > df['high'].shift(-20))
+
+    '''
+      规则24: 分组1
+      '''
+    if (isChooseRule(ruleId, list)):
+        df['分组1'] =(df['day2closeIncome'] < 0) & (df['day2closeIncome'] > - 5)
+
+    '''
+      规则25: 分组2
+      '''
+    if (isChooseRule(ruleId, list)):
+        df['分组2'] = df['day2closeIncome'] <= - 5
     return df
 
 

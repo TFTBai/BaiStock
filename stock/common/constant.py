@@ -34,22 +34,25 @@ def get_day_list(day):
         day_list.append(day_list_index)
     return day_list
 
-day_list = get_day_list(6)
+day_list = get_day_list(20)
 
 '''
 添加默认排序
 '''
-# 'day1closeIncome',  'day2closeIncome',
-#                   'day3closeIncome','day4closeIncome','day5closeIncome','day6closeIncome'
 def getAllBaseNameOrder(day):
     nameList = ['code', 'open', 'close', 'high', 'low', 'price_change', 'p_change', 'volume', 'volume5days',
      'volume10days', 'volume30days','day1o/day0c', '2days', '5days', '30days', '60days', 'kdj_k', 'kdj_d',
      'kdj_j', 'macd', 'macd_DIFF', 'macd_DEA', 'rsi6', 'rsi12', 'rsi24']
     nameListIndex = 0
-    nameListString = 'closeIncome'
+    nameListStringClose = 'closeIncome'
+    nameListStringHigh = 'highIncome'
     while nameListIndex < day:
         nameListIndex = nameListIndex + 1
-        nameList.append('day'+str(nameListIndex)+nameListString)
+        nameList.append('day'+str(nameListIndex)+nameListStringClose)
+    nameListIndex = 0
+    while nameListIndex < day:
+        nameListIndex = nameListIndex + 1
+        nameList.append('day' + str(nameListIndex) + nameListStringHigh)
     return nameList
 
-allBaseNameOrder = getAllBaseNameOrder(6)
+allBaseNameOrder = getAllBaseNameOrder(20)

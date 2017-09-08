@@ -5,16 +5,8 @@ from common import constant as con
 import pandas as pd
 from common import dateUtil
 import gc
+import copy
 
-
-#
-# rightStock.columns = ['序号', '日期', '开盘价', '收盘价', '最高价', '最低价', '量', '股票代码', 'kdj_k', 'kdj_d', 'kdj_j', 'macd',
-#                       'macd_DIFF', 'macd_DEA', 'rsi6', 'rsi12', 'rsi24', '第1天开盘价', '第1天日期', '第1天收益', '第2天日期',
-#                       '第2天收益', '第3天日期', '第3天收益', '第4天日期', '第4天收益', '第5天日期', '第5天收益', '第6天日期', '第6天收益', '第7天日期',
-#                       '第7天收益', 'kdj小于20', 'j大于前一天',
-#                       'd-j<3', 'k-j<3', 'macd<0', '|macd/2|<3', 'diff大于前一天', 'rsi6、rsi12、rsi24<50',
-#                       '|rsi6-rsi12|<3',
-#                       '|rsi6-RSI24|<5']
 
 # 增加正收益率百分比
 def add_days_income_percent(df, rightStock):
@@ -86,16 +78,27 @@ def add_high_income_mean(df, rightStockH):
     return df
 
 
-# 总收益百分比和盈利能力
-def add_final_income(df, rightStock):
-    rightStockGood = rightStock[rightStock.day2closeIncome > 0]
-    rightStockGoodNormal = rightStock[rightStock.day2closeIncome == 0]
+# 如果第二日收盘卖不出,则按原价卖出
+def add_final_income(df, rightStock,stockArgX,dfname):
+    rightStockGood = rightStock[rightStock.day2closeIncome >= 0]
     rightStockNormal = rightStock[(rightStock.day2closeIncome < 0) &
-                                  ((rightStock.day3closeIncome >= 0)
-                                   | (rightStock.day4closeIncome >= 0)
-                                   | (rightStock.day5closeIncome >= 0)
-                                   | (rightStock.day6closeIncome >= 0)
-                                   | (rightStock.day7closeIncome >= 0)
+                                  ((rightStock.day3highIncome >= 0)
+                                   | (rightStock.day4highIncome >= 0)
+                                   | (rightStock.day5highIncome >= 0)
+                                   | (rightStock.day6highIncome >= 0)
+                                   | (rightStock.day7highIncome >= 0)
+                                   | (rightStock.day8highIncome >= 0)
+                                   | (rightStock.day9highIncome >= 0)
+                                   | (rightStock.day11highIncome >= 0)
+                                   | (rightStock.day12highIncome >= 0)
+                                   | (rightStock.day13highIncome >= 0)
+                                   | (rightStock.day14highIncome >= 0)
+                                   | (rightStock.day15highIncome >= 0)
+                                   | (rightStock.day16highIncome >= 0)
+                                   | (rightStock.day17highIncome >= 0)
+                                   | (rightStock.day18highIncome >= 0)
+                                   | (rightStock.day19highIncome >= 0)
+                                   | (rightStock.day20highIncome >= 0)
                                    )]
     rightStockLoss = rightStock[(rightStock['day2highIncome'] < 0)
                                 & (rightStock['day3highIncome'] < 0)
@@ -103,15 +106,48 @@ def add_final_income(df, rightStock):
                                 & (rightStock['day5highIncome'] < 0)
                                 & (rightStock['day6highIncome'] < 0)
                                 & (rightStock['day7highIncome'] < 0)
+                                & (rightStock['day8highIncome'] < 0)
+                                & (rightStock['day9highIncome'] < 0)
+                                & (rightStock['day11highIncome'] < 0)
+                                & (rightStock['day12highIncome'] < 0)
+                                & (rightStock['day13highIncome'] < 0)
+                                & (rightStock['day14highIncome'] < 0)
+                                & (rightStock['day15highIncome'] < 0)
+                                & (rightStock['day16highIncome'] < 0)
+                                & (rightStock['day17highIncome'] < 0)
+                                & (rightStock['day18highIncome'] < 0)
+                                & (rightStock['day19highIncome'] < 0)
+                                & (rightStock['day20highIncome'] < 0)
                                 ]
-    totalCount = len(rightStockGood) + len(rightStockGoodNormal) + len(rightStockNormal) + len(rightStockLoss)
-    df['goodP'] = round(len(rightStockGood) / totalCount, 3)
-    df['normalP'] = round((len(rightStockNormal) + len(rightStockGoodNormal)) / totalCount, 3)
-    df['lossP'] = round(len(rightStockLoss) / totalCount, 3)
-    df['goodI'] = rightStockGood.day2closeIncome.mean()
-    df['normalI'] = 0
-    df['lossI'] = rightStockLoss.day7closeIncome.mean()
-    df['income'] = (df['goodP'] * (df['goodI'] + 1)) + df['normalP'] + (df['lossP'] * (df['lossI'] + 1))
+    # 是否生产保本表
+    if (stockArgX.save):
+        rightStockGood.to_csv(con.detailPath + str(
+            dateUtil.get_date_date()) + dateUtil.get_hour_and_minute_str() + dfname + 'day2收盘卖.csv', index=False)
+        rightStockNormal.to_csv(
+            con.detailPath + str(dateUtil.get_date_date()) + dateUtil.get_hour_and_minute_str() + dfname + '原价卖.csv',
+            index=False)
+        rightStockLoss.to_csv(
+            con.detailPath + str(dateUtil.get_date_date()) + dateUtil.get_hour_and_minute_str() + dfname + '割肉卖.csv',
+            index=False)
+
+    #进行日期分组
+    rightStockGood = group_by_date(rightStockGood)
+    rightStockNormal = group_by_date(rightStockNormal)
+    rightStockLoss = group_by_date(rightStockLoss)
+
+
+    #分组后计算收益和概率
+    totalCount = len(rightStockGood)  + len(rightStockNormal) + len(rightStockLoss)
+    df['day2收盘卖掉概率'] = round(len(rightStockGood) / totalCount, 3)
+    df['原价卖概率'] = round(len(rightStockNormal) / totalCount, 3)
+    df['割肉卖概率'] = round(len(rightStockLoss) / totalCount, 3)
+
+    df['day2收盘卖掉平均收益'] = round(rightStockGood.day2closeIncome.mean(),3)
+    df['原价卖收益'] = 0
+    df['割肉卖平均亏损'] = round(rightStockLoss.day20closeIncome.mean(),3)
+
+    df['保本卖法收益'] = round((df['day2收盘卖掉概率'] * (df['day2收盘卖掉平均收益'] + 1)) + df['原价卖概率'] + (df['割肉卖概率'] * (df['割肉卖平均亏损'] + 1)),3)
+
     return df
 
 
@@ -141,13 +177,13 @@ def group_by_date(rightstock):
 生成某规则的total报表数据
 
 '''
-
-
 def get_total_csv(rightStock, dfname, stockArgX):
     rightStocklist = [dfname]
     totalProfit = pd.DataFrame({'rule': rightStocklist})
-    # rightStockH = copy.deepcopy(rightStock)
-    # totalProfit = add_final_income(totalProfit, rightStock)
+    #复制一份原始stock,用于计算原价卖收益
+    rightStockH = copy.deepcopy(rightStock)
+    #计算原价卖收益
+    totalProfit = add_final_income(totalProfit, rightStockH,stockArgX,dfname)
     totalProfit = add_right_count(totalProfit, rightStock)
     rightStock = group_by_date(rightStock)
     # 是否生产中间表
@@ -269,8 +305,10 @@ def generate_detail_csv(detailTempList, stockArgX, ruleName):
         # 按日期逆向排序
         tempDetail = tempDetail.sort(columns='date', ascending=False)
         # 9.是否进行日期筛选
-        if (stockArgX.dateRangeTF):
-            tempDetail = tempDetail[tempDetail['date'] > stockArgX.dateRange]
+        if (stockArgX.dateBeginTF):
+            tempDetail = tempDetail[tempDetail['date'] > stockArgX.dateBeginRange]
+        if (stockArgX.dateEndTF):
+            tempDetail = tempDetail[tempDetail['date'] < stockArgX.dateEndRange]
         # 10.是否生成detail表
         if (stockArgX.detail and len(tempDetail) > 0):
             tempDetail.to_csv(con.detailPath + str(dateUtil.get_date_date()) + dateUtil.get_hour_and_minute_str() + ruleName + 'detail.csv',

@@ -75,17 +75,24 @@ def start_stock_generator():
     # 参数组合1
     stockArg1 = stockArg()
     stockArg1.totalCsvName = '今日筛选'
-    stockArg1.ruleNumListChoose = [1, 2, 21, 10001]
+    stockArg1.ruleNumListChoose = [1,24,25]
     stockArg1.ruleNumListMust = [10, 13]
+    # stockArg1.ruleNumListChoose = [1,10,23]
+    # stockArg1.ruleNumListMust = []
     stockArg1.detail = True
     stockArg1.mean = False
-    stockArg1.dateRangeTF = True
-    stockArg1.dateRange = '2017-08-29'
+    stockArg1.dateBeginTF = False
+    stockArg1.dateBeginRange = '2017-01-01'
+    stockArg1.dateEndTF = False
+    stockArg1.dateEndRange = '2017-08-10'
     stockArg1.indexOpen = True
     stockArg1.groupByDaysTF = False
+    #是否生成保本表
+    stockArg1.save = True
 
     # 执行规则数据生成器方法
     rule.make_stockData_by_choose(stockArg1)
     dateUtil.print_end_date(startDate)
 
+# update_csv()
 start_stock_generator()
