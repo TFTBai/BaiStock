@@ -183,7 +183,7 @@ def get_total_csv(rightStock, dfname, stockArgX):
     #复制一份原始stock,用于计算原价卖收益
     rightStockH = copy.deepcopy(rightStock)
     #计算原价卖收益
-    totalProfit = add_final_income(totalProfit, rightStockH,stockArgX,dfname)
+    # totalProfit = add_final_income(totalProfit, rightStockH,stockArgX,dfname)
     totalProfit = add_right_count(totalProfit, rightStock)
     rightStock = group_by_date(rightStock)
     # 是否生产中间表
