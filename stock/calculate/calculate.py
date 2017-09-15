@@ -125,7 +125,9 @@ def compensate(stock_data, stock_data_income):
 # 跟第一天开盘做比较计算收益
 def get_firstDay_income(stock_data):
     for day in con.day_list:
-        # 暂时先去掉日期和日期的开高收价格
+        stock_data['day' + str(day) + 'openIncome'] = round(
+            stock_data['open'].shift(-day) / stock_data['open'].shift(-1),
+            4) * 100 - 100
         stock_data['day' + str(day) + 'highIncome'] = round(
             stock_data['high'].shift(-day) / stock_data['open'].shift(-1),
             4) * 100 - 100
@@ -133,6 +135,7 @@ def get_firstDay_income(stock_data):
             stock_data['close'].shift(-day) / stock_data['open'].shift(-1),
             4) * 100 - 100
     for day in con.day_list:
+        stock_data = compensate(stock_data, 'day' + str(day) + 'openIncome')
         stock_data = compensate(stock_data, 'day' + str(day) + 'highIncome')
         stock_data = compensate(stock_data, 'day' + str(day) + 'closeIncome')
     stock_data = stock_data.sort(columns='date')

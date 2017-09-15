@@ -34,7 +34,7 @@ def get_day_list(day):
         day_list.append(day_list_index)
     return day_list
 
-day_list = get_day_list(20)
+day_list = get_day_list(6)
 
 '''
 添加默认排序
@@ -46,6 +46,7 @@ def getAllBaseNameOrder(day):
     nameListIndex = 0
     nameListStringClose = 'closeIncome'
     nameListStringHigh = 'highIncome'
+    nameListStringOpen = 'openIncome'
     while nameListIndex < day:
         nameListIndex = nameListIndex + 1
         nameList.append('day'+str(nameListIndex)+nameListStringClose)
@@ -53,6 +54,10 @@ def getAllBaseNameOrder(day):
     while nameListIndex < day:
         nameListIndex = nameListIndex + 1
         nameList.append('day' + str(nameListIndex) + nameListStringHigh)
+    nameListIndex = 0
+    while nameListIndex < day:
+        nameListIndex = nameListIndex + 1
+        nameList.append('day' + str(nameListIndex) + nameListStringOpen)
     return nameList
 
-allBaseNameOrder = getAllBaseNameOrder(20)
+allBaseNameOrder = getAllBaseNameOrder(6)

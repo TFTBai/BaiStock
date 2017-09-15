@@ -57,10 +57,10 @@ def add_max_price_day_percent(df, rightStock):
 def add_income_mean(df, rightStock):
     for day in con.day_list:
         df['d' + str(day) + 'cMean'] = round(rightStock['day' + str(day) + 'closeIncome'].mean(), 2)
-    # for day in con.day_list:
-    #     df['d' + str(day) + 'oMean'] = round(rightStock['day' + str(day) + 'openIncome'].mean(), 2)
-    # for day in con.day_list:
-    #     df['d' + str(day) + 'hMean'] = round(rightStock['day' + str(day) + 'highIncome'].mean(), 2)
+    for day in con.day_list:
+        df['d' + str(day) + 'oMean'] = round(rightStock['day' + str(day) + 'openIncome'].mean(), 2)
+    for day in con.day_list:
+        df['d' + str(day) + 'hMean'] = round(rightStock['day' + str(day) + 'highIncome'].mean(), 2)
     return df
 
 
