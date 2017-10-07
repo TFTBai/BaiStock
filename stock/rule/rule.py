@@ -59,12 +59,12 @@ def get_all_rule(allList):
     rule4.name = 'macd大于前一天'
 
     rule5 = rule()
-    rule5.tf = False
+    rule5.tf = True
     rule5.num = 5
     rule5.name = '下影线'
 
     rule6 = rule()
-    rule6.tf = False
+    rule6.tf = True
     rule6.num = 6
     rule6.name = '蓝柱体'
 
@@ -88,7 +88,7 @@ def get_all_rule(allList):
     rule10.name = '有30日线'
 
     rule11 = rule()
-    rule11.tf = False
+    rule11.tf = True
     rule11.num = 11
     rule11.name = '5日线大于前一天'
 
