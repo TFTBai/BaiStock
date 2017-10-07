@@ -94,4 +94,5 @@ def start_stock_generator():
     rule.make_stockData_by_choose(stockArg1)
     dateUtil.print_end_date(startDate)
 init_csv()
+# update_csv()
 # start_stock_generator()
