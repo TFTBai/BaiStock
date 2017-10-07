@@ -93,6 +93,5 @@ def start_stock_generator():
     # 执行规则数据生成器方法
     rule.make_stockData_by_choose(stockArg1)
     dateUtil.print_end_date(startDate)
-
-# update_csv()
-start_stock_generator()
+init_csv()
+# start_stock_generator()
