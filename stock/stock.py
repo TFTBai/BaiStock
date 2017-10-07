@@ -90,7 +90,7 @@ def start_stock_generator():
     # 是否生成保本表
     stockArg1.save = False
 
-    # 执行规则数据生成器方法
+    # 执行规则数据生成器方法！
     rule.make_stockData_by_choose(stockArg1)
     dateUtil.print_end_date(startDate)
 init_csv()
