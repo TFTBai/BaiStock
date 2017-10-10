@@ -40,110 +40,133 @@ def get_all_rule(allList):
 
     rule1 = rule()
     rule1.tf = True
+    rule1.value = False
     rule1.num = 1
     rule1.name = '日线小于30日线的75%'
 
     rule2 = rule()
     rule2.tf = True
+    rule2.value = False
     rule2.num = 2
     rule2.name = '日线小于30日线的80%'
 
     rule3 = rule()
     rule3.tf = True
     rule3.num = 3
-    rule3.name = 'j大于前一天'
+    rule3.value = True
+    rule3.name = '30天后收益'
 
     rule4 = rule()
     rule4.tf = True
+    rule4.value = False
     rule4.num = 4
     rule4.name = 'macd大于前一天'
 
     rule5 = rule()
     rule5.tf = True
+    rule5.value = False
     rule5.num = 5
     rule5.name = '下影线'
 
     rule6 = rule()
     rule6.tf = True
+    rule6.value = False
     rule6.num = 6
     rule6.name = '蓝柱体'
 
     rule7 = rule()
     rule7.tf = True
+    rule7.value = False
     rule7.num = 7
     rule7.name = 'rsi'
 
     rule8 = rule()
     rule8.tf = True
+    rule8.value = False
     rule8.num = 8
     rule8.name = '5日线上交叉60日线'
+
     rule9 = rule()
     rule9.tf = True
+    rule9.value = False
     rule9.num = 9
     rule9.name = '5日线下交叉60日线'
 
     rule10 = rule()
     rule10.tf = True
+    rule10.value = False
     rule10.num = 10
     rule10.name = '有30日线'
 
     rule11 = rule()
     rule11.tf = True
+    rule11.value = False
     rule11.num = 11
     rule11.name = '5日线大于前一天'
 
     rule12 = rule()
     rule12.tf = True
+    rule12.value = False
     rule12.num = 12
     rule12.name = 'kdj金叉'
 
     rule13 = rule()
     rule13.tf = True
+    rule13.value = False
     rule13.num = 13
     rule13.name = 'jdk死叉'
 
     rule14 = rule()
     rule14.tf = True
+    rule14.value = False
     rule14.num = 14
     rule14.name = 'rsi金叉'
 
     rule15 = rule()
     rule15.tf = True
+    rule15.value = False
     rule15.num = 15
     rule15.name = 'rsi死叉'
 
     rule16 = rule()
     rule16.tf = True
+    rule16.value = False
     rule16.num = 16
     rule16.name = 'rsi小于某值'
 
     rule17 = rule()
     rule17.tf = True
+    rule17.value = False
     rule17.num = 17
     rule17.name = '低开'
 
     rule18 = rule()
     rule18.tf = True
+    rule18.value = False
     rule18.num = 18
     rule18.name = '交易量猛增'
 
     rule19 = rule()
     rule19.tf = True
+    rule19.value = False
     rule19.num = 19
     rule19.name = '收盘价大于前一天'
 
     rule20 = rule()
     rule20.tf = True
+    rule20.value = False
     rule20.num = 20
     rule20.name = '日线大于前一天'
 
     rule21 = rule()
     rule21.tf = True
+    rule21.value = False
     rule21.num = 21
     rule21.name = '日线成多头排列'
 
     rule22 = rule()
     rule22.tf = True
+    rule22.value = False
     rule22.num = 22
     rule22.name = '日线紧密排列'
 
@@ -152,16 +175,19 @@ def get_all_rule(allList):
     '''
     rule10001 = rule()
     rule10001.tf = True
+    rule10001.value = False
     rule10001.num = 10001
     rule10001.name = '大盘规则1'
 
     rule10002 = rule()
     rule10002.tf = True
+    rule10002.value = False
     rule10002.num = 10002
     rule10002.name = '大盘规则2'
 
     rule10003 = rule()
     rule10003.tf = True
+    rule10003.value = False
     rule10003.num = 10003
     rule10003.name = '大盘规则3'
     ruleList = []
@@ -248,21 +274,18 @@ def use_the_choose_rule(df, list):
         df['日线小于30日线的80%'] = (df['2days'] / df['60days'] < 0.84) & (df['close'] / df['30days'] < 0.9)
 
     '''
-    规则3:j大于前一天
+    规则3:30天后收益
     '''
     if (isChooseRule(ruleId, list)):
-        df['j大于前一天'] = (df['2days'].shift(4) / df['60days'].shift(4) < 0.74) & (
-                        df['close'].shift(4) / df['30days'].shift(4) < 0.82) & (df['close'] / df['open'].shift(4) < 0.9) & (
-            df['close'] < df['close'].shift())
+        df['30天后收益'] = round(df['close'].shift(-31) / df['open'].shift(-1), 3)
 
     '''
     规则4:macd大于前一天
     '''
     if (isChooseRule(ruleId, list)):
         df['macd大于前一天'] = (df['2days'].shift(4) / df['60days'].shift(4) < 0.84) & (
-                        df['close'].shift(4) / df['30days'].shift(4) < 0.9) & (df['close'] / df['open'].shift(4) < 0.9) & (
-            df['close'] < df['close'].shift())
-
+            df['close'].shift(4) / df['30days'].shift(4) < 0.9) & (df['close'] / df['open'].shift(4) < 0.9) & (
+                              df['close'] < df['close'].shift())
 
     '''
     规则5:下影线
@@ -313,10 +336,11 @@ def use_the_choose_rule(df, list):
     '''
     if (isChooseRule(ruleId, list)):
         df['5日线大于前一天'] = (
-        df['rsi6'] < 45) & (df['rsi12'] < 45) & (df['rsi24'] < 45) & (df['rsi6'] > df['rsi6'].shift()) & (
-                            df['rsi12'] > df['rsi12'].shift()) & (df['rsi24'] > df['rsi24'].shift()) & (
-                        df['rsi6'] > 30) & (
-                            df['rsi12'] > 30) & (df['rsi24'] > 30)
+                             df['rsi6'] < 45) & (df['rsi12'] < 45) & (df['rsi24'] < 45) & (
+                         df['rsi6'] > df['rsi6'].shift()) & (
+                             df['rsi12'] > df['rsi12'].shift()) & (df['rsi24'] > df['rsi24'].shift()) & (
+                             df['rsi6'] > 30) & (
+                             df['rsi12'] > 30) & (df['rsi24'] > 30)
 
     '''
     规则 12
@@ -340,18 +364,18 @@ def use_the_choose_rule(df, list):
     '''
     if (isChooseRule(ruleId, list)):
         df['rsi金叉'] = (df['2days'] / df['60days'] < 0.74) & (df['close'] / df['30days'] < 0.82) & (
-        df['rsi6'] < 45) & (df['rsi12'] < 45) & (df['rsi24'] < 45) & (df['rsi6'] > df['rsi6'].shift()) & (
-                            df['rsi12'] > df['rsi12'].shift()) & (df['rsi24'] > df['rsi24'].shift()) & (
-                        df['rsi6'] > 30) & (
-                            df['rsi12'] > 30) & (df['rsi24'] > 30) & (df['close'] > df['close'].shift())
+            df['rsi6'] < 45) & (df['rsi12'] < 45) & (df['rsi24'] < 45) & (df['rsi6'] > df['rsi6'].shift()) & (
+                          df['rsi12'] > df['rsi12'].shift()) & (df['rsi24'] > df['rsi24'].shift()) & (
+                          df['rsi6'] > 30) & (
+                          df['rsi12'] > 30) & (df['rsi24'] > 30) & (df['close'] > df['close'].shift())
     '''
     规则 15
     rsi死叉
     '''
     if (isChooseRule(ruleId, list)):
         df['rsi死叉'] = (df['close'] / df['close'].shift() > 1.025) & (
-        df['close'].shift() / df['close'].shift(2) > 1.025) & (
-                       df['close'].shift(2) / df['close'].shift(3) > 1.025)
+            df['close'].shift() / df['close'].shift(2) > 1.025) & (
+                          df['close'].shift(2) / df['close'].shift(3) > 1.025)
 
     '''
     规则16:rsi小于40
@@ -365,7 +389,7 @@ def use_the_choose_rule(df, list):
     '''
     if (isChooseRule(ruleId, list)):
         df['低开'] = (df['close'] / df['close'].shift() > 1.055) & (
-        df['close'].shift() / df['close'].shift(2) > 1.055) & (
+            df['close'].shift() / df['close'].shift(2) > 1.055) & (
                        df['close'].shift(2) / df['close'].shift(3) > 1.055)
 
     '''
@@ -393,18 +417,18 @@ def use_the_choose_rule(df, list):
     if (isChooseRule(ruleId, list)):
         df['日线成多头排列'] = (df['volume5days'] / df['volume30days'] < 0.95) & (
             df['volume10days'] / df['volume30days'] < 0.95) & (
-            df['volume5days'] / df['volume10days'] < 0.95)
+                            df['volume5days'] / df['volume10days'] < 0.95)
 
     '''
     规则22：日线紧密排列
     '''
     if (isChooseRule(ruleId, list)):
         df['日线紧密排列'] = (df['2days'] / df['60days'] < 0.74) & (df['close'] / df['30days'] < 0.82) & (
-        df['rsi6'] < 45) & (df['rsi12'] < 45) & (df['rsi24'] < 45) & (df['rsi6'] > df['rsi6'].shift()) & (
-                            df['rsi12'] > df['rsi12'].shift()) & (df['rsi24'] > df['rsi24'].shift()) & (
-                        df['rsi6'] > 30) & (
-                            df['rsi12'] > 30) & (df['rsi24'] > 30) & (df['close'] / df['close'].shift() > 1.025) & \
-                        (df['low'].shift(-1) / df['close'] < 1.095) & (df['close'] / df['close'].shift() > 1.095)
+            df['rsi6'] < 45) & (df['rsi12'] < 45) & (df['rsi24'] < 45) & (df['rsi6'] > df['rsi6'].shift()) & (
+                           df['rsi12'] > df['rsi12'].shift()) & (df['rsi24'] > df['rsi24'].shift()) & (
+                           df['rsi6'] > 30) & (
+                           df['rsi12'] > 30) & (df['rsi24'] > 30) & (df['close'] / df['close'].shift() > 1.025) & \
+                       (df['low'].shift(-1) / df['close'] < 1.095) & (df['close'] / df['close'].shift() > 1.095)
     return df
 
 
@@ -447,9 +471,13 @@ def get_TF_stock(stockCashList, brackets, ruleList):
                 if (ruleNum == rule.num):
                     # 如果规则是True则股票数据使用True筛选
                     if (rule.tf == True):
+                        if (rule.value == True):
+                            continue
                         dfc = dfc[dfc[rule.name] == True]
                     # 如果规则是False则股票数据使用False筛选
                     if (rule.tf == False):
+                        if (rule.value == True):
+                            continue
                         dfc = dfc[dfc[rule.name] == False]
         # 如果筛选后,没有任何股票符合条件,则直接跳过此规则
         if dfc.empty:

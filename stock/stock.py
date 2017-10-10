@@ -76,13 +76,13 @@ def start_stock_generator():
     stockArg1 = stockArg()
     stockArg1.totalCsvName = '今日筛选'
     stockArg1.ruleNumListChoose = [1, 2, 21, 10001]
-    stockArg1.ruleNumListMust = [10, 13 ,20]
+    stockArg1.ruleNumListMust = [3, 10, 13, 20]
     # stockArg1.ruleNumListChoose = [2]
     # stockArg1.ruleNumListMust = [10,13]
     stockArg1.detail = True
     stockArg1.mean = False
     stockArg1.dateBeginTF = False
-    stockArg1.dateBeginRange = '2017-09-10'
+    stockArg1.dateBeginRange = '2017-10-08'
     stockArg1.dateEndTF = False
     stockArg1.dateEndRange = '2017-08-10'
     stockArg1.indexOpen = True
@@ -93,6 +93,8 @@ def start_stock_generator():
     # 执行规则数据生成器方法！
     rule.make_stockData_by_choose(stockArg1)
     dateUtil.print_end_date(startDate)
-init_csv()
+
+
+# init_csv()
 # update_csv()
-# start_stock_generator()
+start_stock_generator()
