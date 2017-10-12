@@ -312,5 +312,5 @@ def generate_detail_csv(detailTempList, stockArgX, ruleName):
         # 10.是否生成detail表
         if (stockArgX.detail and len(tempDetail) > 0):
             tempDetail.to_csv(con.detailPath + str(dateUtil.get_date_date()) + dateUtil.get_hour_and_minute_str() + ruleName + 'detail.csv',
-                              index=False)
+                              index=False,encoding='utf-8')
         return tempDetail
