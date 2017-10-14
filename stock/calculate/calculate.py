@@ -109,7 +109,10 @@ def get_income(stock_data):
 
 # 补偿公式
 def compensate_formula(x):
-    return round((1 - (100 / (100 + x))) * 100, 3)
+    income = x
+    if(x < 0):
+        round((1 - (100 / (100 + x))) * 100, 3)
+    return income
 
 
 # 补偿负收益未连续计算

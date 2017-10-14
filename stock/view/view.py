@@ -3,7 +3,8 @@
 '''
 from common import constant as con
 import pandas as pd
-from common import dateUtil
+from common import dateUtil,commonUtil
+from rule import rule
 import gc
 import copy
 
@@ -180,8 +181,12 @@ def group_by_date(rightstock):
 def get_total_csv(rightStock, dfname, stockArgX):
     rightStocklist = [dfname]
     totalProfit = pd.DataFrame({'rule': rightStocklist})
+    #复制一份原始stock，用于规则买卖收益
+    rightStockStrategy = copy.deepcopy(rightStock)
+    totalProfit = rule.add_strategy_income(totalProfit,rightStockStrategy,stockArgX,dfname)
+
     #复制一份原始stock,用于计算原价卖收益
-    rightStockH = copy.deepcopy(rightStock)
+    # rightStockH = copy.deepcopy(rightStock)
     #计算原价卖收益
     # totalProfit = add_final_income(totalProfit, rightStockH,stockArgX,dfname)
     totalProfit = add_right_count(totalProfit, rightStock)

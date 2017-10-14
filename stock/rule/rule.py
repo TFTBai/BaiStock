@@ -5,6 +5,8 @@ from common import commonUtil
 import copy
 from view import view
 from common import dateUtil
+from simulation import simulation
+from calculate import calculate as cal
 
 '''
 获取成熟规则list,由于代码结构调整暂不可用,有需求时修改恢复
@@ -613,6 +615,54 @@ def add_ruleTF_for_index(indexCashList, allList):
     for indexCash in indexCashList:
         globals()[indexCash] = use_the_index_choose_rule(globals()[indexCash], allList)
         globals()[indexCash] = globals()[indexCash].drop(con.allBaseNameOrder, axis=1)
+
+'''
+增加策略买卖收益
+
+整体思路如下
+①读detail表，获取日期list
+开始每日的循环
+    ②根据日期 遍历每一个股票
+    开始股票的循环
+        ③根据股票，读取内存中的base csv数据
+        ④根据base csv，和开始日期 锁定当日数据
+        ⑤根据买入规则，模拟买入 （如果没符合买入规则，跳出循环）
+        ⑥根据卖出规则，模拟卖出（如果最后一个交易日没卖出，强制卖出）
+'''
+def add_strategy_income(df,rightStockStrategy,stockArgX,dfname):
+    #声明所有日期的总收益列表
+    all_date_income_list = []
+    #①读detail表，获取日期list
+    date_list = commonUtil.get_detail_date(rightStockStrategy)
+    #循环每一个日期
+    for date in date_list:
+        #声明当前日期的收益list
+        now_date_income_list = []
+        #拿出对应日期的detail数据
+        dateDetailStock = rightStockStrategy[rightStockStrategy['date']==date]
+        code_list = dateDetailStock['code']
+        #循环每一个股票
+        for code in code_list:
+            stockCashCode = 'stockCash'+ str(int(code)).zfill(6)
+            baseStockInfo = globals()[stockCashCode]
+            right_strategy = simulation.get_strategy_income(baseStockInfo,date)
+            #如果策略买卖成功则加入 当前日期收益list
+            if(right_strategy.sell_sucess ==True):
+                #补偿算法 处理收益值
+                now_date_income_list.append(cal.compensate_formula(right_strategy.strategy_income))
+        #如果当前日期 没有符合策略的股票则跳过
+        if(len(now_date_income_list)==0):
+            continue
+        #获取当前日期 平均收益
+        strategy_income = commonUtil.get_mean_by_list(now_date_income_list)
+        #当前日期平均收益加入总收益列表
+        all_date_income_list.append(strategy_income)
+    if(len(all_date_income_list) > 0):
+        #将总策略收益列表 做平均
+        strategy_income_mean = commonUtil.get_mean_by_list(all_date_income_list)
+        #将总策略平均收益赋值到total表中
+        df['策略收益'] = strategy_income_mean
+    return df
 
 
 '''
