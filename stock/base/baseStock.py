@@ -151,7 +151,7 @@ def put_base_csv_code_into_cash():
     count = 0
     for code in allCode.code:
         # count = count+1
-        # if count > 100:
+        # if count > 5:
         #   return baseCodeList
         codeStr = str(code).zfill(6)
         baseCodeList.append(codeStr)

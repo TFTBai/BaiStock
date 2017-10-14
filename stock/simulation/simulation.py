@@ -37,10 +37,10 @@ def get_strategy_income(baseStockInfo,date):
     sell_days_detail = baseStockInfo[baseStockInfo['date'] > date]
 
     #计划买入价格
-    buy_price = (baseStockInfo[baseStockInfo['date'] == date])['open'].tolist()[0]
+    buy_price = sell_days_detail.head(1)['open'].tolist()[0]
 
     # 计划卖出价格
-    sell_price = buy_price * 2000
+    sell_price = buy_price * 1.25
 
 
     sell_date_list = sell_days_detail['date']
@@ -59,7 +59,7 @@ def get_strategy_income(baseStockInfo,date):
             right_strategy.sell_sucess = True
 
         #①如果交易日是day20 前面没卖出,则割肉收盘价卖
-        if(day_count==2):
+        if(day_count==19):
             if(right_strategy.sell_sucess == False):
                 right_strategy.sell_sucess = True
                 sell_price = sell_detail['close'].tolist()[0]
