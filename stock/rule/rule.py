@@ -280,13 +280,12 @@ def use_the_choose_rule(df, list):
         # if (isChooseRule(ruleId, list)):
         # df['kdj小于20'] = (df['kdj_k'] < 20) & (df['kdj_d'] < 20) & (df['kdj_j'] < 20)
         # df['日线小于30日线的80%'] = (df['close'] / df['30days'] <0.8)
-        df['日线小于30日线的80%'] = (df['2days'] / df['60days'] < 0.84) & (df['close'] / df['30days'] < 0.9)
+        df['日线小于30日线的80%'] = (df['2days'] / df['60days'] < 0.79) & (df['close'] / df['30days'] < 0.86)
     '''
     规则3:j大于前一天
     '''
     if (isChooseRule(ruleId, list)):
-        df['j大于前一天'] = (df['2days'] / df['60days'] < 0.79) & (df['close'] / df['30days'] < 0.86)
-
+        df['j大于前一天'] = (df['2days'] / df['60days'] < 0.84) & (df['close'] / df['30days'] < 0.9)
     '''
     规则4:macd大于前一天
     '''
