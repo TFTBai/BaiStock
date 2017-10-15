@@ -648,7 +648,7 @@ def add_strategy_income(df,rightStockStrategy,stockArgX,dfname):
         for code in code_list:
             stockCashCode = 'stockCash'+ str(int(code)).zfill(6)
             baseStockInfo = globals()[stockCashCode]
-            right_strategy = simulation.get_strategy_income(baseStockInfo,date)
+            right_strategy = simulation.get_strategy_income(baseStockInfo,date,stockArgX)
             #如果策略买卖成功则加入 当前日期收益list
             if(right_strategy.sell_sucess ==True):
                 #补偿算法 处理收益值

@@ -111,7 +111,7 @@ def get_income(stock_data):
 def compensate_formula(x):
     income = x
     if(x < 0):
-        round((1 - (100 / (100 + x))) * 100, 3)
+        income = round((1 - (100 / (100 + x))) * 100, 3)
     return income
 
 

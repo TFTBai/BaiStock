@@ -72,28 +72,47 @@ def start_stock_generator():
         # 是否生成detail表
         detail = False
 
-    # 参数组合1
+    ''' 基础参数 '''
     stockArg1 = stockArg()
-    stockArg1.totalCsvName = '今日筛选赚25个点'
+    #total表名称
+    stockArg1.totalCsvName = '今日筛选赚15个点10天'
+    #是否生成明细表开关
+    stockArg1.detail = True
+    #是否生成平均表开关
+    stockArg1.mean = False
+    # 是否生成保本表开关
+    stockArg1.save = False
+    #是否使用开始日期参数开关
+    stockArg1.dateBeginTF = False
+
+    #是否分年开关
+    stockArg1.groupByDaysTF = False
+    #开始日期参数
+    stockArg1.dateBeginRange = '2017-01-01'
+    #是否使用结束日期参数开关
+    stockArg1.dateEndTF = False
+    #结束日期参数
+    stockArg1.dateEndRange = '2017-08-10'
+
+    ''' 规则参数 '''
     # stockArg1.ruleNumListChoose = [1, 2, 21, 10001]
     # stockArg1.ruleNumListMust = [3, 10, 13, 20]
-    stockArg1.ruleNumListChoose = [11,13]
+    #组合规则参数
+    stockArg1.ruleNumListChoose = [11,13,21]
+    #必选规则参数
     stockArg1.ruleNumListMust = [1,10,20]
-    stockArg1.detail = True
-    stockArg1.mean = False
-    stockArg1.dateBeginTF = False
-    stockArg1.dateBeginRange = '2017-01-01'
-    stockArg1.dateEndTF = False
-    stockArg1.dateEndRange = '2017-08-10'
+    #大盘规则开关
     stockArg1.indexOpen = True
-    stockArg1.groupByDaysTF = False
-    # 是否生成保本表
-    stockArg1.save = False
+
+    ''' 策略参数 '''
+    #卖出收益参数(买入价格的多少倍)
+    stockArg1.sellIncome = 1.1
+    #策略失败割肉交易日参数(day几 收盘割肉卖)
+    stockArg1.cutMeatDay = 20
 
     # 执行规则数据生成器方法！
     rule.make_stockData_by_choose(stockArg1)
     dateUtil.print_end_date(startDate)
-
 
 # init_csv()
 # update_csv()
