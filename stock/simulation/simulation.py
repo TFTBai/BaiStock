@@ -18,7 +18,7 @@ class strategy:
     #是否卖出成功
     sell_sucess = False
 
-def get_strategy_income(baseStockInfo,date):
+def get_strategy_income(baseStockInfo,date,stockArgX):
     '''
         获得策略买卖收益
         策略收益=（买入价格-卖出价格）买入价格
@@ -40,7 +40,7 @@ def get_strategy_income(baseStockInfo,date):
     buy_price = sell_days_detail.head(1)['open'].tolist()[0]
 
     # 计划卖出价格
-    sell_price = buy_price * 1.25
+    sell_price = buy_price * stockArgX.sellIncome
 
 
     sell_date_list = sell_days_detail['date']
@@ -48,6 +48,10 @@ def get_strategy_income(baseStockInfo,date):
     for sell_date in sell_date_list:
         sell_detail = sell_days_detail[sell_days_detail['date']==sell_date]
         day_count = day_count + 1
+
+        #day1不可以卖
+        if(day_count==1):
+            continue
         #卖出策略
         #如果当日最高价高于策略卖出价 标记卖出成功!
         if(sell_detail['high'].tolist()[0] > sell_price):
@@ -58,14 +62,12 @@ def get_strategy_income(baseStockInfo,date):
             sell_price = sell_detail['open'].tolist()[0]
             right_strategy.sell_sucess = True
 
-        #①如果交易日是day20 前面没卖出,则割肉收盘价卖
-        if(day_count==19):
+        #①如果交易日是day-cutMeatDay 前面没卖出,则割肉收盘价卖
+        if(day_count==(stockArgX.cutMeatDay-1)):
             if(right_strategy.sell_sucess == False):
                 right_strategy.sell_sucess = True
                 sell_price = sell_detail['close'].tolist()[0]
 
-        # right_strategy.sell_sucess = True
-        # sell_price = sell_detail['close'].tolist()[0]
         #如果卖出成功了,终止循环返回策略收益
         if(right_strategy.sell_sucess == True):
             right_strategy.buy_price = buy_price
