@@ -4,10 +4,12 @@ from common import constant as con
 
 
 # 按时间查询
-def get_k_data(code):
-    df = ts.get_k_data(code, start='2016-12-01', end='2017-02-05')
-    print(df)
+def get_k_data():
+    df = ts.get_k_data('603997')
+    df.to_csv("d:/1.csv")
     return df
+
+get_k_data()
 
 
 # 历史数据全查询
@@ -48,4 +50,3 @@ def get_csv():
     df3.to_csv(con.csvPath + 'ffff' + '.csv', index=False, encoding='utf-8')
 
 
-get_hist_data()

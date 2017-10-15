@@ -63,7 +63,7 @@ def get_strategy_income(baseStockInfo,date,stockArgX):
             right_strategy.sell_sucess = True
 
         #①如果交易日是day-cutMeatDay 前面没卖出,则割肉收盘价卖
-        if(day_count==(stockArgX.cutMeatDay-1)):
+        if(day_count==(stockArgX.cutMeatDay)):
             if(right_strategy.sell_sucess == False):
                 right_strategy.sell_sucess = True
                 sell_price = sell_detail['close'].tolist()[0]
@@ -72,6 +72,6 @@ def get_strategy_income(baseStockInfo,date,stockArgX):
         if(right_strategy.sell_sucess == True):
             right_strategy.buy_price = buy_price
             right_strategy.sell_price = sell_price
-            right_strategy.strategy_income = (round(sell_price/buy_price,4)*100)-100
+            right_strategy.strategy_income = (round(sell_price/buy_price,5)*100)-100
             return right_strategy
     return right_strategy

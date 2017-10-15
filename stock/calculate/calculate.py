@@ -109,8 +109,13 @@ def get_income(stock_data):
 
 # 补偿公式
 def compensate_formula(x):
+    income = round((1 - (100 / (100 + x))) * 100, 3)
+    return income
+
+# 补偿公式
+def compensate_formula_for_int(x):
     income = x
-    if(x < 0):
+    if(income<0):
         income = round((1 - (100 / (100 + x))) * 100, 3)
     return income
 
@@ -157,4 +162,11 @@ def get_lost_data(stock_data, codeStr, index):
     stock_data_lost = ts.get_k_data(codeStr, index=index)
     stock_data_lost = stock_data_lost[stock_data_lost['date'] > '2016-12-31']
     return stock_data.append(stock_data_lost)
+
+# print(compensate_formula(-2.4444))
+# 10
+#10.807 10.256 -5.098 -5.372
+#23.008 22.498 -2.216 -2.266
+# 10.74 10.18 -5.2141 -5.501
+# 22.5 21.95 -2.4444 -2.506
 

@@ -31,7 +31,7 @@ def create_all_stock_csv():
     allCode = get_all_code()
     # 循环当前所有stock 生成所有stock本地csv
     for code in allCode.code:
-        # if (code == 1):
+        # if (code == 603997):
             codeStr = str(code).zfill(6)
             # 查询单stock历史所有数据
             create_stock_csv(codeStr)
@@ -78,7 +78,7 @@ def add_stock_derivative_data():
     allCode = get_all_code()
     # 2.循环所有的csv文件
     for code in allCode.code:
-        # if (code == 1):
+        # if (code == 603997):
             count = count + 1
             codeStr = str(code).zfill(6)
             # 3.读取本地csv数据
@@ -151,7 +151,7 @@ def put_base_csv_code_into_cash():
     count = 0
     for code in allCode.code:
         # count = count+1
-        # if count > 5:
+        # if count > 10:
         #   return baseCodeList
         codeStr = str(code).zfill(6)
         baseCodeList.append(codeStr)
@@ -178,3 +178,5 @@ def create_all_index_csv():
         index_data = ts.get_k_data(codeStr, index=True, start='2010-01-01', end='2016-12-31')
         index_data.to_csv(con.indexCsvPath + codeStr + '.csv', index=False, encoding='utf-8')
 
+# create_all_stock_csv()
+# add_stock_derivative_data()

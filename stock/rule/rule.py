@@ -652,7 +652,7 @@ def add_strategy_income(df,rightStockStrategy,stockArgX,dfname):
             #如果策略买卖成功则加入 当前日期收益list
             if(right_strategy.sell_sucess ==True):
                 #补偿算法 处理收益值
-                now_date_income_list.append(cal.compensate_formula(right_strategy.strategy_income))
+                now_date_income_list.append(cal.compensate_formula_for_int(right_strategy.strategy_income))
         #如果当前日期 没有符合策略的股票则跳过
         if(len(now_date_income_list)==0):
             continue
