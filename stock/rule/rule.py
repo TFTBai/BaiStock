@@ -54,7 +54,7 @@ def get_all_rule(allList):
 
     rule3 = rule()
     rule3.tf = True
-    rule2.value = False
+    rule3.value = False
     rule3.num = 3
     rule3.name = 'j大于前一天'
 
