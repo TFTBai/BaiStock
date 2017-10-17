@@ -178,5 +178,3 @@ def create_all_index_csv():
         index_data = ts.get_k_data(codeStr, index=True, start='2010-01-01', end='2016-12-31')
         index_data.to_csv(con.indexCsvPath + codeStr + '.csv', index=False, encoding='utf-8')
 
-# create_all_stock_csv()
-# add_stock_derivative_data()

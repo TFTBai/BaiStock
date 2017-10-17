@@ -3,6 +3,7 @@ import pandas as pd
 from common import constant as con
 from common import commonUtil
 import copy
+import time
 from view import view
 from common import dateUtil
 from simulation import simulation
@@ -567,6 +568,9 @@ def generate_report_form(ChooseCombinations, ruleNumListMust, ruleList, stockCas
                            index=False)
     print('生成csv文件结束!')
 
+    if(len(tempDetail)>0):
+        return 1
+
 
 '''
 获取所有的stock数据命名放入内存中
@@ -667,6 +671,12 @@ def add_strategy_income(df,rightStockStrategy,stockArgX,dfname):
         df['策略收益'] = strategy_income_mean
     return df
 
+'''
+获取自定义total表规则
+'''
+def get_total_list():
+    df = pd.read_csv("D:\workSpace\BaiStock\data\detail\今日筛选.csv")
+    return df['rule']
 
 '''
 按规则参数生成股票数据
@@ -717,4 +727,5 @@ def make_stockData_by_choose(stockArgX):
     '''
     6.循环规则组合与股票标记一一对应 生成detail和total报表
     '''
-    generate_report_form(ChooseCombinations, ruleNumListMust, ruleList, stockCashList, stockArgX)
+    sucessCode = generate_report_form(ChooseCombinations, ruleNumListMust, ruleList, stockCashList, stockArgX)
+    return sucessCode
