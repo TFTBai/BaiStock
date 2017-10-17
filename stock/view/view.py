@@ -180,10 +180,12 @@ def group_by_date(rightstock):
 '''
 def get_total_csv(rightStock, dfname, stockArgX):
     rightStocklist = [dfname]
-    totalProfit = pd.DataFrame({'rule': rightStocklist})
-    #复制一份原始stock，用于规则买卖收益
-    rightStockStrategy = copy.deepcopy(rightStock)
-    totalProfit = rule.add_strategy_income(totalProfit,rightStockStrategy,stockArgX,dfname)
+    totalProfit = pd.DataFrame({'rule|': rightStocklist})
+
+    if(stockArgX.strategy == True):
+        #复制一份原始stock，用于策略买卖收益
+        rightStockStrategy = copy.deepcopy(rightStock)
+        totalProfit = rule.add_strategy_income(totalProfit,rightStockStrategy,stockArgX,dfname)
 
     #复制一份原始stock,用于计算原价卖收益
     # rightStockH = copy.deepcopy(rightStock)

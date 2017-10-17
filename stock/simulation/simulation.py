@@ -36,6 +36,9 @@ def get_strategy_income(baseStockInfo,date,stockArgX):
     #可买出detail
     sell_days_detail = baseStockInfo[baseStockInfo['date'] > date]
 
+    if(len(sell_days_detail)<1):
+        return right_strategy
+
     #计划买入价格
     buy_price = sell_days_detail.head(1)['open'].tolist()[0]
 

@@ -77,7 +77,7 @@ def start_stock_generator():
     # total表名称
     stockArg1.totalCsvName = '今日筛选'
     # 是否生成明细表开关
-    stockArg1.detail = True
+    stockArg1.detail = False
     # 是否生成平均表开关
     stockArg1.mean = False
     # 是否生成保本表开关
@@ -95,20 +95,22 @@ def start_stock_generator():
     stockArg1.dateEndRange = '2017-08-10'
 
     ''' 规则参数 '''
-    stockArg1.ruleNumListChoose = [1, 2, 3, 21, 10001]
-    stockArg1.ruleNumListMust = [10, 11, 13, 20]
+    stockArg1.ruleNumListChoose = [11,13,19,21,10001]
+    stockArg1.ruleNumListMust = [1,10,20]
     # 组合规则参数
-    # stockArg1.ruleNumListChoose = [11]
+    # stockArg1.ruleNumListChoose = [11,13]
     # 必选规则参数
-    # stockArg1.ruleNumListMust = [1,10,20,13,21]
+    # stockArg1.ruleNumListMust = [1,10]
     # 大盘规则开关
     stockArg1.indexOpen = True
 
     ''' 策略参数 '''
+    # 策略开关
+    stockArg1.strategy = False
     # 卖出收益参数(买入价格的多少倍)
-    stockArg1.sellIncome = 1.1
+    stockArg1.sellIncome = 1.15
     # 策略失败割肉交易日参数(day几 收盘割肉卖)
-    stockArg1.cutMeatDay = 10
+    stockArg1.cutMeatDay = 15
 
     # 执行规则数据生成器方法！
     rule.make_stockData_by_choose(stockArg1)
