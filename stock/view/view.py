@@ -180,7 +180,7 @@ def group_by_date(rightstock):
 '''
 def get_total_csv(rightStock, dfname, stockArgX):
     rightStocklist = [dfname]
-    totalProfit = pd.DataFrame({'rule|': rightStocklist})
+    totalProfit = pd.DataFrame({'rule': rightStocklist})
 
     if(stockArgX.strategy == True):
         #复制一份原始stock，用于策略买卖收益

@@ -10,31 +10,28 @@ from simulation import simulation
 from calculate import calculate as cal
 
 '''
-获取成熟规则list,由于代码结构调整暂不可用,有需求时修改恢复
+获取成熟规则列表
 '''
-
-
-# def get_total_list():
-#     allList = []
-#     df = pd.read_csv(con.detailPath + '2017-03-23total模拟开始纪念版数据收益.csv')
-#     ruleLists = df['rule']
-#     count = 0
-#     for ruleList in ruleLists:
-#         count = count + 1
-#         ruleList = ruleList.replace('rule', '')
-#         ruleList = ruleList.replace('+10', '')
-#         ruleList = ruleList.replace('+', ',')
-#         ruleList = ruleList.replace('-', ',')
-#         ruleList = ruleList.replace(',', '', 1)
-#         list(ruleList)
-#         tempList = ruleList.split(',')
-#         rightList = []
-#         for rule in tempList:
-#             ruleInt = int(rule)
-#             rightList.append(ruleInt)
-#         allList.append(rightList)
-#     return allList
-
+def get_total_list():
+    allList = []
+    df = pd.read_csv(con.detailPath + '成熟规则.csv')
+    ruleLists = df['rule']
+    count = 0
+    for ruleList in ruleLists:
+        count = count + 1
+        ruleList = ruleList.replace('rule', '')
+        ruleList = ruleList.replace('+10', '')
+        ruleList = ruleList.replace('+', ',')
+        ruleList = ruleList.replace('-', ',')
+        ruleList = ruleList.replace(',', '', 1)
+        list(ruleList)
+        tempList = ruleList.split(',')
+        rightList = []
+        for rule in tempList:
+            ruleInt = int(rule)
+            rightList.append(ruleInt)
+        allList.append(rightList)
+    return allList
 
 def get_all_rule(allList):
     class rule:
@@ -568,7 +565,7 @@ def generate_report_form(ChooseCombinations, ruleNumListMust, ruleList, stockCas
                            index=False)
     print('生成csv文件结束!')
 
-    if(len(tempDetail)>0):
+    if(len(totalReportForm)>0):
         return 1
 
 
@@ -672,20 +669,43 @@ def add_strategy_income(df,rightStockStrategy,stockArgX,dfname):
     return df
 
 '''
-获取自定义total表规则
+生成股票数据
 '''
-def get_total_list():
-    df = pd.read_csv("D:\workSpace\BaiStock\data\detail\今日筛选.csv")
-    return df['rule']
+def make_stockData(stockArgX):
+
+    '''
+    3.获取base.csv中所有的code
+    '''
+    baseCodeList = bs.put_base_csv_code_into_cash()
+    '''
+    4.1获取所有的stock数据命名放入内存中,返回stock内存数据名称list
+    '''
+    stockCashList = put_all_stock_into_cash(baseCodeList)
+
+
+    #如果使用成熟规则 则循环,否则只执行一次
+    if(stockArgX.mustByCsvTF == True):
+        stockArgX.ruleNumListChoose = []
+        topList = get_total_list()
+        for mustList in topList:
+            stockArgX.ruleNumListMust = mustList
+            stockArgX.ruleNumListChoose = []
+            code = make_stockData_by_choose(stockArgX,stockCashList)
+            if code == 1:
+                print("已找到符合条件的stock 程序运行完毕! ")
+                break
+            else:
+                print("未找到符合条件的stock 程序继续运行!")
+    else:
+        make_stockData_by_choose(stockArgX,stockCashList)
 
 '''
 按规则参数生成股票数据
 '''
-
-
-def make_stockData_by_choose(stockArgX):
+def make_stockData_by_choose(stockArgX,stockCashList):
     ruleNumListChoose = stockArgX.ruleNumListChoose
     ruleNumListMust = stockArgX.ruleNumListMust
+
     '''
     1.1 创建 股票可选规则 的所有组合
     '''
@@ -701,15 +721,6 @@ def make_stockData_by_choose(stockArgX):
     # 根据集合list加载需要的规则对象
     ruleList = get_all_rule(allList)
 
-    '''
-    3.获取base.csv中所有的code
-    '''
-    baseCodeList = bs.put_base_csv_code_into_cash()
-
-    '''
-    4.1获取所有的stock数据命名放入内存中,返回stock内存数据名称list
-    '''
-    stockCashList = put_all_stock_into_cash(baseCodeList)
     '''
     4.2获取所有的index数据放入内存中
     '''

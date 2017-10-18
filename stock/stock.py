@@ -36,18 +36,6 @@ def update_csv():
     return
 
 
-'''
-获取成熟规则list ps:由于代码结构调整暂不可用,有需求时修改恢复
-'''
-def get_one_stock(stockArg1):
-    topList = rule.get_total_list()
-    for mustList in topList:
-        code = rule.make_stockData_by_choose(mustList)
-        if code == 1:
-            print("已找到符合条件的stock 程序运行完毕! ")
-            break
-        else:
-            print("未找到符合条件的stock 程序继续运行!")
 
 '''
 启动股票生成器
@@ -85,7 +73,7 @@ def start_stock_generator():
     stockArg1.groupByDaysTF = False
 
     # 是否使用开始日期参数开关
-    stockArg1.dateBeginTF = True
+    stockArg1.dateBeginTF = False
     # 开始日期参数
     stockArg1.dateBeginRange = '2017-10-16'
     # 是否使用结束日期参数开关
@@ -94,6 +82,7 @@ def start_stock_generator():
     stockArg1.dateEndRange = '2017-08-10'
 
     ''' 规则参数 '''
+    #成熟规则获取开关,开启时下面定义规则无效
     stockArg1.mustByCsvTF = False
     stockArg1.ruleNumListChoose = [11,13,21,19]
     stockArg1.ruleNumListMust = [1,10]
@@ -102,7 +91,7 @@ def start_stock_generator():
     # 必选规则参数
     # stockArg1.ruleNumListMust = [1,10]
     # 大盘规则开关
-    stockArg1.indexOpen = True
+    stockArg1.indexOpen = False
 
     ''' 策略参数 '''
     # 策略开关
@@ -111,17 +100,11 @@ def start_stock_generator():
     stockArg1.sellIncome = 1.15
     # 策略失败割肉交易日参数(day几 收盘割肉卖)
     stockArg1.cutMeatDay = 15
+    # 执行规则数据生成器方法！
+    rule.make_stockData(stockArg1)
 
-    #如果使用自定义规则 则循环,否则只执行一次
-    if(stockArg1.mustByCsvTF == True):
-        stockArg1.ruleNumListChoose = []
-        get_one_stock(stockArg1)
-    else:
-        # 执行规则数据生成器方法！
-        rule.make_stockData_by_choose(stockArg1)
     dateUtil.print_end_date(startDate)
 
-
 # init_csv()
-# update_csv()
-start_stock_generator()
+update_csv()
+# start_stock_generator()
