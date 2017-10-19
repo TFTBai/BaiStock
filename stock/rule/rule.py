@@ -655,22 +655,25 @@ def add_strategy_income(df,rightStockStrategy,stockArgX,dfname):
             baseStockInfo = globals()[stockCashCode]
             right_strategy = simulation.get_strategy_income(baseStockInfo,date,stockArgX)
             #如果策略买卖成功则加入 当前日期收益list
-            if(right_strategy.sell_sucess ==True):
+            if(right_strategy.sell_success ==True):
                 #补偿算法 处理收益值
                 now_date_income_list.append(cal.compensate_formula_for_int(right_strategy.strategy_income))
                 #赋值卖出day
                 all_sell_day_list.append(right_strategy.sell_day)
                 mean_sell_day_list.append(right_strategy.sell_day)
-        if(len(mean_sell_day_list)>3):
-            mean_sell_day_list = commonUtil.get_mean_by_list(mean_sell_day_list)
-        all_sell_day_list_for_mean= all_sell_day_list_for_mean + mean_sell_day_list
+
         #如果当前日期 没有符合策略的股票则跳过
         if(len(now_date_income_list)==0):
             continue
-        #获取当前日期 平均收益
+        # 获取当前日期 平均收益
         strategy_income = commonUtil.get_mean_by_list(now_date_income_list)
-        #当前日期平均收益加入总收益列表
+        # 当前日期平均收益加入总收益列表
         all_date_income_list.append(strategy_income)
+
+        if(len(mean_sell_day_list)>3):
+            mean_sell_day_list = [commonUtil.get_mean_by_list(mean_sell_day_list)]
+        all_sell_day_list_for_mean = all_sell_day_list_for_mean + mean_sell_day_list
+
     if(len(all_date_income_list) > 0):
         #将总策略收益列表 做平均
         strategy_income_mean = commonUtil.get_mean_by_list(all_date_income_list)

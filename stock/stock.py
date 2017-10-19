@@ -75,7 +75,7 @@ def start_stock_generator():
     # 是否使用开始日期参数开关
     stockArg1.dateBeginTF = False
     # 开始日期参数
-    stockArg1.dateBeginRange = '2017-10-17'
+    stockArg1.dateBeginRange = '2017-10-18'
     # 是否使用结束日期参数开关
     stockArg1.dateEndTF = False
     # 结束日期参数
@@ -84,26 +84,42 @@ def start_stock_generator():
     ''' 规则参数 '''
     #成熟规则获取开关,开启时下面定义规则无效
     stockArg1.mustByCsvTF = False
-    stockArg1.ruleNumListChoose = [11,13,21,19]
-    stockArg1.ruleNumListMust = [1,10]
-    # 组合规则参数
-    # stockArg1.ruleNumListChoose = [11,13]
-    # 必选规则参数
+    # stockArg1.ruleNumListChoose = [11,13,21,19]
     # stockArg1.ruleNumListMust = [1,10]
+    # 组合规则参数
+    stockArg1.ruleNumListChoose = [11]
+    # 必选规则参数
+    stockArg1.ruleNumListMust = [1,10,19,20]
     # 大盘规则开关
     stockArg1.indexOpen = False
 
     ''' 策略参数 '''
     # 策略开关
-    stockArg1.strategy = True
-    # 卖出收益参数(买入价格的多少倍)
-    stockArg1.sellIncome = 1.1
+    stockArg1.strategy = False
+    # 卖出收益参数(百分点)
+    stockArg1.sellIncome = 10
+
+    # 策略买入开关
+    stockArg1.buyLineTF = False
+    # 策略买入等待天数
+    stockArg1.buyLineWaitDays = 3
+    # 策略买入线为day0close的加n个百分点
+    stockArg1.buyLine = -2
+    # 策略买入先期望修正
+    stockArg1.buyLineExpect = 0
+
+    # 策略止损线开关
+    stockArg1.stopLineTF = False
+    # 策略止损线(百分点)
+    stockArg1.stopLine = -10
+    # 策略止损线期望修正(百分点)
+    stockArg1.stopLineExpect = 0
+
     # 策略失败割肉交易日参数(day几 收盘割肉卖)
     stockArg1.cutMeatDay = 15
 
     # 执行规则数据生成器方法！
     rule.make_stockData(stockArg1)
-
     dateUtil.print_end_date(startDate)
 
 # init_csv()

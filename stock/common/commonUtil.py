@@ -39,3 +39,8 @@ def get_mean_by_list(list):
     mean = round(sum/len(list),3)
     return mean
 
+'''
+根据百分点返回倍数
+'''
+def get_multiple_by_percentage(percentage):
+    return 1+(percentage/100)
