@@ -99,7 +99,7 @@ def start_stock_generator():
     # 卖出收益参数(百分点)
     stockArg1.sellIncome = 10
 
-    # 策略买入开关
+    # 策略买入开关,关闭则默认为day1open
     stockArg1.buyLineTF = False
     # 策略买入等待天数
     stockArg1.buyLineWaitDays = 3
