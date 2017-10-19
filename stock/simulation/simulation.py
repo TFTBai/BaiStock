@@ -17,6 +17,8 @@ class strategy:
     strategy_income = 0
     #是否卖出成功
     sell_sucess = False
+    #第几天卖出的
+    sell_day = 0
 
 def get_strategy_income(baseStockInfo,date,stockArgX):
     '''
@@ -76,5 +78,6 @@ def get_strategy_income(baseStockInfo,date,stockArgX):
             right_strategy.buy_price = buy_price
             right_strategy.sell_price = sell_price
             right_strategy.strategy_income = (round(sell_price/buy_price,5)*100)-100
+            right_strategy.sell_day = day_count
             return right_strategy
     return right_strategy

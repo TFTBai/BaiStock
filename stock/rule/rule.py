@@ -555,17 +555,16 @@ def generate_report_form(ChooseCombinations, ruleNumListMust, ruleList, stockCas
                 '''
                 # 将某规则的收益total数据添加到total报表中
                 totalReportForm = totalReportForm.append(totalProfit)
-
-    print('生成totalcsv文件开始!')
-    dateUtil.print_date()
-    # 最终生成csv命名
-    totalCsvName = stockArgX.totalCsvName
-    totalReportForm.to_csv(con.detailPath + str(
-        dateUtil.get_date_date()) + dateUtil.get_hour_and_minute_str() + 'total' + totalCsvName + '.csv',
-                           index=False)
-    print('生成csv文件结束!')
-
+    print('筛选出符合的规则种类数为:'+str(len(totalReportForm)))
     if(len(totalReportForm)>0):
+        print('筛选成功,生成totalcsv文件开始!')
+        dateUtil.print_date()
+        # 最终生成csv命名
+        totalCsvName = stockArgX.totalCsvName
+        totalReportForm.to_csv(con.detailPath + str(
+            dateUtil.get_date_date()) + dateUtil.get_hour_and_minute_str() + 'total' + totalCsvName + '.csv',
+                               index=False)
+        print('生成csv文件结束!')
         return 1
 
 
@@ -636,6 +635,8 @@ def add_ruleTF_for_index(indexCashList, allList):
 def add_strategy_income(df,rightStockStrategy,stockArgX,dfname):
     #声明所有日期的总收益列表
     all_date_income_list = []
+    #声明所有卖出day的列表
+    all_sell_day_list = []
     #①读detail表，获取日期list
     date_list = commonUtil.get_detail_date(rightStockStrategy)
     #循环每一个日期
@@ -654,6 +655,8 @@ def add_strategy_income(df,rightStockStrategy,stockArgX,dfname):
             if(right_strategy.sell_sucess ==True):
                 #补偿算法 处理收益值
                 now_date_income_list.append(cal.compensate_formula_for_int(right_strategy.strategy_income))
+                #赋值卖出day
+                all_sell_day_list.append(right_strategy.sell_day)
         #如果当前日期 没有符合策略的股票则跳过
         if(len(now_date_income_list)==0):
             continue
@@ -666,6 +669,7 @@ def add_strategy_income(df,rightStockStrategy,stockArgX,dfname):
         strategy_income_mean = commonUtil.get_mean_by_list(all_date_income_list)
         #将总策略平均收益赋值到total表中
         df['策略收益'] = strategy_income_mean
+        df['平均卖出天数'] = commonUtil.get_mean_by_list(all_sell_day_list)
     return df
 
 '''
@@ -685,15 +689,13 @@ def make_stockData(stockArgX):
 
     #如果使用成熟规则 则循环,否则只执行一次
     if(stockArgX.mustByCsvTF == True):
-        stockArgX.ruleNumListChoose = []
+        stockArgX.ruleNumListChoose = [10]
         topList = get_total_list()
         for mustList in topList:
             stockArgX.ruleNumListMust = mustList
-            stockArgX.ruleNumListChoose = []
             code = make_stockData_by_choose(stockArgX,stockCashList)
             if code == 1:
                 print("已找到符合条件的stock 程序运行完毕! ")
-                break
             else:
                 print("未找到符合条件的stock 程序继续运行!")
     else:

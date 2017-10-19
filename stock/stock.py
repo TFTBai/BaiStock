@@ -64,7 +64,7 @@ def start_stock_generator():
     # total表名称
     stockArg1.totalCsvName = '今日筛选'
     # 是否生成明细表开关
-    stockArg1.detail = False
+    stockArg1.detail = True
     # 是否生成平均表开关
     stockArg1.mean = False
     # 是否生成保本表开关
@@ -73,9 +73,9 @@ def start_stock_generator():
     stockArg1.groupByDaysTF = False
 
     # 是否使用开始日期参数开关
-    stockArg1.dateBeginTF = False
+    stockArg1.dateBeginTF = True
     # 开始日期参数
-    stockArg1.dateBeginRange = '2017-10-16'
+    stockArg1.dateBeginRange = '2017-10-17'
     # 是否使用结束日期参数开关
     stockArg1.dateEndTF = False
     # 结束日期参数
@@ -83,7 +83,7 @@ def start_stock_generator():
 
     ''' 规则参数 '''
     #成熟规则获取开关,开启时下面定义规则无效
-    stockArg1.mustByCsvTF = False
+    stockArg1.mustByCsvTF = True
     stockArg1.ruleNumListChoose = [11,13,21,19]
     stockArg1.ruleNumListMust = [1,10]
     # 组合规则参数
@@ -106,5 +106,5 @@ def start_stock_generator():
     dateUtil.print_end_date(startDate)
 
 # init_csv()
-update_csv()
-# start_stock_generator()
+# update_csv()
+start_stock_generator()

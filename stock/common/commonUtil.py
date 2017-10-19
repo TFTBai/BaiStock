@@ -14,7 +14,6 @@ def get_all_combinations(numlist):
 根据detail，获取日期list
 '''
 def get_detail_date(detail):
-
     detail = detail.sort(columns='date')
     #声明日期list
     dateList = []

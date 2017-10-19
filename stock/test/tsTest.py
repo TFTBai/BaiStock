@@ -5,7 +5,7 @@ from common import constant as con
 
 # 按时间查询
 def get_k_data():
-    df = ts.get_k_data('603997')
+    df = ts.get_k_data(code = '603997',start='2010-01-01',end='2017-12-12')
     df.to_csv("d:/1.csv")
     return df
 
