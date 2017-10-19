@@ -555,7 +555,6 @@ def generate_report_form(ChooseCombinations, ruleNumListMust, ruleList, stockCas
                 '''
                 # 将某规则的收益total数据添加到total报表中
                 totalReportForm = totalReportForm.append(totalProfit)
-    print('筛选出符合的规则种类数为:'+str(len(totalReportForm)))
     if(len(totalReportForm)>0):
         print('筛选成功,生成totalcsv文件开始!')
         dateUtil.print_date()
@@ -669,6 +668,10 @@ def add_strategy_income(df,rightStockStrategy,stockArgX,dfname):
         strategy_income_mean = commonUtil.get_mean_by_list(all_date_income_list)
         #将总策略平均收益赋值到total表中
         df['策略收益'] = strategy_income_mean
+        sell_day_list = con.get_day_list(stockArgX.cutMeatDay)
+        for day in sell_day_list:
+            dayName = 's'+str(day)
+            df[dayName] = all_sell_day_list.count(day)
         df['平均卖出天数'] = commonUtil.get_mean_by_list(all_sell_day_list)
     return df
 

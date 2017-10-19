@@ -38,3 +38,4 @@ def get_mean_by_list(list):
         sum = sum + data
     mean = round(sum/len(list),3)
     return mean
+

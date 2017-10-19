@@ -73,7 +73,7 @@ def start_stock_generator():
     stockArg1.groupByDaysTF = False
 
     # 是否使用开始日期参数开关
-    stockArg1.dateBeginTF = True
+    stockArg1.dateBeginTF = False
     # 开始日期参数
     stockArg1.dateBeginRange = '2017-10-17'
     # 是否使用结束日期参数开关
@@ -83,7 +83,7 @@ def start_stock_generator():
 
     ''' 规则参数 '''
     #成熟规则获取开关,开启时下面定义规则无效
-    stockArg1.mustByCsvTF = True
+    stockArg1.mustByCsvTF = False
     stockArg1.ruleNumListChoose = [11,13,21,19]
     stockArg1.ruleNumListMust = [1,10]
     # 组合规则参数
@@ -95,11 +95,12 @@ def start_stock_generator():
 
     ''' 策略参数 '''
     # 策略开关
-    stockArg1.strategy = False
+    stockArg1.strategy = True
     # 卖出收益参数(买入价格的多少倍)
-    stockArg1.sellIncome = 1.15
+    stockArg1.sellIncome = 1.1
     # 策略失败割肉交易日参数(day几 收盘割肉卖)
     stockArg1.cutMeatDay = 15
+
     # 执行规则数据生成器方法！
     rule.make_stockData(stockArg1)
 

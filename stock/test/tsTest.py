@@ -50,3 +50,8 @@ def get_csv():
     df3.to_csv(con.csvPath + 'ffff' + '.csv', index=False, encoding='utf-8')
 
 
+def get_day_count():
+    daylist = [1,2,2,3,3,3,5,5,5,1]
+    d = set(daylist)
+    print(d)
+get_day_count()

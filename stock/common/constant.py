@@ -61,3 +61,6 @@ def getAllBaseNameOrder(day):
     return nameList
 
 allBaseNameOrder = getAllBaseNameOrder(6)
+
+
+
