@@ -636,6 +636,8 @@ def add_strategy_income(df,rightStockStrategy,stockArgX,dfname):
     all_date_income_list = []
     #声明所有卖出day的列表
     all_sell_day_list = []
+    #声明所有卖出day的列表
+    all_sell_day_list_for_mean = []
     #①读detail表，获取日期list
     date_list = commonUtil.get_detail_date(rightStockStrategy)
     #循环每一个日期
@@ -645,6 +647,8 @@ def add_strategy_income(df,rightStockStrategy,stockArgX,dfname):
         #拿出对应日期的detail数据
         dateDetailStock = rightStockStrategy[rightStockStrategy['date']==date]
         code_list = dateDetailStock['code']
+        #平均卖出天数list
+        mean_sell_day_list = []
         #循环每一个股票
         for code in code_list:
             stockCashCode = 'stockCash'+ str(int(code)).zfill(6)
@@ -656,6 +660,10 @@ def add_strategy_income(df,rightStockStrategy,stockArgX,dfname):
                 now_date_income_list.append(cal.compensate_formula_for_int(right_strategy.strategy_income))
                 #赋值卖出day
                 all_sell_day_list.append(right_strategy.sell_day)
+                mean_sell_day_list.append(right_strategy.sell_day)
+        if(len(mean_sell_day_list)>3):
+            mean_sell_day_list = commonUtil.get_mean_by_list(mean_sell_day_list)
+        all_sell_day_list_for_mean= all_sell_day_list_for_mean + mean_sell_day_list
         #如果当前日期 没有符合策略的股票则跳过
         if(len(now_date_income_list)==0):
             continue
@@ -672,7 +680,7 @@ def add_strategy_income(df,rightStockStrategy,stockArgX,dfname):
         for day in sell_day_list:
             dayName = 's'+str(day)
             df[dayName] = all_sell_day_list.count(day)
-        df['平均卖出天数'] = commonUtil.get_mean_by_list(all_sell_day_list)
+        df['平均卖出天数'] = commonUtil.get_mean_by_list(all_sell_day_list_for_mean)
     return df
 
 '''
