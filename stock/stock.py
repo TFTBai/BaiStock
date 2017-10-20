@@ -73,9 +73,9 @@ def start_stock_generator():
     stockArgX.groupByDaysTF = False
 
     # 是否使用开始日期参数开关
-    stockArgX.dateBeginTF = False
+    stockArgX.dateBeginTF = True
     # 开始日期参数
-    stockArgX.dateBeginRange = '2017-10-18'
+    stockArgX.dateBeginRange = '2017-10-19'
     # 是否使用结束日期参数开关
     stockArgX.dateEndTF = False
     # 结束日期参数
@@ -116,7 +116,7 @@ def start_stock_generator():
     stockArgX.buyLineExpect = 0
 
     # 策略止损线开关
-    stockArgX.stopLineTF = True
+    stockArgX.stopLineTF = False
     # 策略止损线(百分点)
     stockArgX.stopLine = 10
     # 策略止损线期望修正(百分点)
