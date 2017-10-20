@@ -322,7 +322,8 @@ def use_the_choose_rule(df, list):
     5日线上交叉60日线
     '''
     if (isChooseRule(ruleId, list)):
-        df['5日线上交叉60日线'] = (df['5days'].shift() < df['60days'].shift()) & (df['5days'] >= df['60days'])
+        df['5日线上交叉60日线'] = (df['kdj_k'] > 20) & (df['kdj_d'] > 20) & (df['kdj_j'] > 20) & (df['kdj_j'] < 40) & (
+            df['kdj_j'] < 40) & (df['kdj_j'] < 40)
 
     '''
     规则9
