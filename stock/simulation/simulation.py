@@ -89,7 +89,7 @@ def get_strategy_income(baseStockInfo,date,stockArgX):
                 low = sell_detail['low'].tolist()[0]
                 if(low<lowest):
                     lowest = low
-                sell_price = lowest + (buy_price * commonUtil.get_multiple_by_percentage(stockArgX.sellIncomeByLow)) - buy_price
+                sell_price = lowest + (buy_price * stockArgX.sellIncomeByLow/100)
             if (stockArgX.stopLineTF == True):
                 # 止损线价格
                 stop_line_price = buy_price * commonUtil.get_multiple_by_percentage(stockArgX.stopLine)
