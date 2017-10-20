@@ -44,9 +44,3 @@ def get_mean_by_list(list):
 '''
 def get_multiple_by_percentage(percentage):
     return 1+(percentage/100)
-
-'''
-根据百分点返回相加
-'''
-def get_multiple_by_percentage(percentage):
-    return 1+(percentage/100)
