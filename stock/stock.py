@@ -58,11 +58,18 @@ def start_stock_generator():
         dateRange = ''
         # 是否生成detail表
         detail = False
+    stockArgX = stockArg()
+
+    '''股票类型过滤'''
+    stockArgX.stockTypeTF = False
+    '''
+    '''
+    stockArgX.stockTypeList = []
+
 
     ''' 基础参数 '''
-    stockArgX = stockArg()
     # total表名称
-    stockArgX.totalCsvName = '今日筛选1'
+    stockArgX.totalCsvName = '今日筛选'
     # 是否生成明细表开关
     stockArgX.detail = True
     # 是否生成平均表开关
@@ -75,7 +82,7 @@ def start_stock_generator():
     # 是否使用开始日期参数开关
     stockArgX.dateBeginTF = True
     # 开始日期参数
-    stockArgX.dateBeginRange = '2017-10-19'
+    stockArgX.dateBeginRange = '2017-10-26'
     # 是否使用结束日期参数开关
     stockArgX.dateEndTF = False
     # 结束日期参数
@@ -85,7 +92,7 @@ def start_stock_generator():
     #成熟规则获取开关,开启时下面定义规则无效
     stockArgX.mustByCsvTF = False
     stockArgX.ruleNumListChoose = [11,13,21,19]
-    stockArgX.ruleNumListMust = [1,10]
+    stockArgX.ruleNumListMust = [3,10]
     # 组合规则参数
     # stockArgX.ruleNumListChoose = [11]
     # 必选规则参数
@@ -95,10 +102,26 @@ def start_stock_generator():
 
     ''' 策略参数 '''
     # 策略开关
-    stockArgX.strategy = True
+    stockArgX.strategy = False
+
+
+    '''买入策略'''
+    #买入策略一
+
+    #买入策略二
+    # 买入线 开关
+    stockArgX.buyLineTF = False
+    # 买入线 等待天数
+    stockArgX.buyLineWaitDays = 3
+    # 买入线 为day0close的加n个百分点
+    stockArgX.buyLine = -2
+    # 策略买入先期望修正
+    stockArgX.buyLineExpect = 0
+
+
 
     # 固定卖出收益开关
-    stockArgX.sellIncomeTF = True
+    stockArgX.sellIncomeTF = False
     # 固定卖出收益参数(百分点)
     stockArgX.sellIncome = 10
     # 按low卖出收益开关
@@ -106,19 +129,12 @@ def start_stock_generator():
     # 按low卖出收益参数
     stockArgX.sellIncomeByLow = 10
 
-    # 策略买入开关,关闭则默认为day1open
-    stockArgX.buyLineTF = False
-    # 策略买入等待天数
-    stockArgX.buyLineWaitDays = 3
-    # 策略买入线为day0close的加n个百分点
-    stockArgX.buyLine = -2
-    # 策略买入先期望修正
-    stockArgX.buyLineExpect = 0
+
 
     # 策略止损线开关
     stockArgX.stopLineTF = False
     # 策略止损线(百分点)
-    stockArgX.stopLine = 10
+    stockArgX.stopLine = -10
     # 策略止损线期望修正(百分点)
     stockArgX.stopLineExpect = 0
     # 策略失败割肉交易日参数(day几 收盘割肉卖)

@@ -3,14 +3,17 @@ import pandas as pd
 from common import constant as con
 
 
-# 按时间查询
+# 按时间查询`
 def get_k_data():
     df = ts.get_k_data(code = '603997',start='2010-01-01',end='2017-12-12')
     df.to_csv("d:/1.csv")
     return df
 
-get_k_data()
-
+# 按时间查询
+def get_day_all():
+    df = ts.get_day_all(date='2017-08-01')
+    df.to_csv("d:/1.csv")
+    return df
 
 # 历史数据全查询
 def get_hist_data(code):
@@ -54,4 +57,3 @@ def get_day_count():
     daylist = [1,2,2,3,3,3,5,5,5,1]
     d = set(daylist)
     print(d)
-get_day_count()

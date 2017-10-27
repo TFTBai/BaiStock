@@ -695,7 +695,7 @@ def make_stockData(stockArgX):
     '''
     3.获取base.csv中所有的code
     '''
-    baseCodeList = bs.put_base_csv_code_into_cash()
+    baseCodeList = bs.put_base_csv_code_into_cash(stockArgX)
     '''
     4.1获取所有的stock数据命名放入内存中,返回stock内存数据名称list
     '''

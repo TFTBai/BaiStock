@@ -24,6 +24,14 @@ def get_all_code():
     df = pd.read_csv(con.basePath + 'base.csv', encoding='gbk')
     return df
 
+# 获取特定的code列表
+def get_code(stockArgX):
+    df = pd.read_csv(con.basePath + 'base.csv', encoding='gbk')
+    if(stockArgX.stockTypeTF == False):
+        return df
+    stockTypeList = stockArgX.stockTypeList
+    return df
+
 
 # 生成所有stock基础数据csv
 def create_all_stock_csv():
@@ -142,11 +150,11 @@ def update_all_stock():
 '''
 
 
-def put_base_csv_code_into_cash():
+def put_base_csv_code_into_cash(stockArgX):
     # 0.声明base csv缓存用来存储code数据
     baseCodeList = []
     # 1.读取base文件获取所有的csv文件名=code
-    allCode = get_all_code()
+    allCode = get_code(stockArgX)
     # 2.循环所有的code
     count = 0
     for code in allCode.code:
