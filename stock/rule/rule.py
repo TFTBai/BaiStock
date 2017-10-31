@@ -278,19 +278,19 @@ def use_the_choose_rule(df, list):
         # if (isChooseRule(ruleId, list)):
         # df['kdj小于20'] = (df['kdj_k'] < 20) & (df['kdj_d'] < 20) & (df['kdj_j'] < 20)
         # df['日线小于30日线的80%'] = (df['close'] / df['30days'] <0.8)
-        df['日线小于30日线的80%'] = (df['2days'] / df['60days'] < 0.79) & (df['close'] / df['30days'] < 0.86)
+        df['日线小于30日线的80%'] = (df['2days'] / df['60days'] < 0.79) & (df['close'] / df['30days'] < 0.86) & (
+            df['2days'] / df['60days'] >= 0.74) & (df['close'] / df['30days'] >= 0.82)
     '''
     规则3:j大于前一天
     '''
     if (isChooseRule(ruleId, list)):
-        df['j大于前一天'] = (df['2days'] / df['60days'] < 0.84) & (df['close'] / df['30days'] < 0.9)
+        df['j大于前一天'] = (df['2days'] / df['60days'] < 0.84) & (df['close'] / df['30days'] < 0.9) & (
+            df['2days'] / df['60days'] >= 0.79) & (df['close'] / df['30days'] >= 0.86)
     '''
     规则4:macd大于前一天
     '''
     if (isChooseRule(ruleId, list)):
-        df['macd大于前一天'] = (df['2days'].shift(4) / df['60days'].shift(4) < 0.84) & (
-                        df['close'].shift(4) / df['30days'].shift(4) < 0.9) & (df['close'] / df['open'].shift(4) < 0.9) & (
-            df['close'] < df['close'].shift())
+        df['macd大于前一天'] = (df['close'] / df['close'].shift(40) < 0.63) & (df['close'] / df['close'].shift(10) < 0.9)
 
 
     '''
@@ -299,7 +299,8 @@ def use_the_choose_rule(df, list):
     # 收盘价：开盘价=99%-101%（涨跌幅1%以内）
     '''
     if (isChooseRule(ruleId, list)):
-        df['下影线'] = (df['kdj_k'] < 30) & (df['kdj_d'] < 30) & (df['kdj_j'] < 30)
+        df['下影线'] = (df['close'] / df['close'].shift(40) < 0.71) & ((df['close'] / df['close'].shift(60) < 0.65) | (
+            df['close'] / df['close'].shift(10) < 0.9))
 
     '''
     规则6:蓝柱体
@@ -352,7 +353,7 @@ def use_the_choose_rule(df, list):
     kdj金叉
     '''
     if (isChooseRule(ruleId, list)):
-        df['kdj金叉'] = (df['high'] / df['close'] > 1.02)
+        df['kdj金叉'] = (df['close'] / df['close'].shift() < 0.95)
 
     '''
     规则 13
