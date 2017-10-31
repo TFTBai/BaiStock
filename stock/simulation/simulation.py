@@ -43,7 +43,8 @@ def get_strategy_income(baseStockInfo,date,stockArgX):
         return right_strategy
 
     buy_price = 0
-    sell_price =0
+    sell_price = 0
+    lowest = 1000
 
     if(stockArgX.buyLineTF==True):
         # day0 close价格
@@ -74,21 +75,27 @@ def get_strategy_income(baseStockInfo,date,stockArgX):
                 else:
                     continue
 
-        #只有当卖出价格为0时候计算,避免覆盖
-        if(sell_price == 0):
-            # 计划卖出价格
-            sell_price = buy_price * commonUtil.get_multiple_by_percentage(stockArgX.sellIncome)
+        #day1不可以卖
+        if(day_count==1):
+            continue
 
+        # 只有当卖出价格为0时候计算,避免覆盖
+        if (sell_price == 0):
+            # 固定收益卖出价
+            if (stockArgX.sellIncomeTF == True):
+                sell_price = buy_price * commonUtil.get_multiple_by_percentage(stockArgX.sellIncome)
+            # 按low收益卖出价
+            if (stockArgX.sellIncomeByLowTF == True):
+                low = sell_detail['low'].tolist()[0]
+                if(low<lowest):
+                    lowest = low
+                sell_price = lowest + (buy_price * stockArgX.sellIncomeByLow/100)
             if (stockArgX.stopLineTF == True):
                 # 止损线价格
                 stop_line_price = buy_price * commonUtil.get_multiple_by_percentage(stockArgX.stopLine)
                 # 止损线期望价格
                 stop_line_expect_price = buy_price * commonUtil.get_multiple_by_percentage(
                     stockArgX.stopLine + stockArgX.stopLineExpect)
-
-        #day1不可以卖
-        if(day_count==1):
-            continue
 
         #卖出策略
         #如果当日最高价高于策略卖出价 标记卖出成功!
@@ -101,7 +108,7 @@ def get_strategy_income(baseStockInfo,date,stockArgX):
             right_strategy.sell_success = True
 
         #是否使用止损线策略
-        if(stockArgX.stopLine == True):
+        if(stockArgX.stopLineTF == True):
             #如果当日最低价低于止损线,则卖出价位止损线期望价格
             if(sell_detail['low'].tolist()[0]<stop_line_price):
                 sell_price = stop_line_expect_price
