@@ -12,15 +12,16 @@ from calculate import calculate as cal
 '''
 获取成熟规则列表
 '''
-def get_total_list():
+def get_total_list(stockArgX):
     allList = []
-    df = pd.read_csv(con.detailPath + '成熟规则.csv')
+    df = pd.read_csv(con.detailPath + stockArgX.mustByCsvName+'.csv')
     ruleLists = df['rule']
     count = 0
     for ruleList in ruleLists:
         count = count + 1
         ruleList = ruleList.replace('rule', '')
         ruleList = ruleList.replace('+10', '')
+        ruleList = ruleList.replace('+20', '')
         ruleList = ruleList.replace('+', ',')
         ruleList = ruleList.replace('-', ',')
         ruleList = ruleList.replace(',', '', 1)
@@ -702,12 +703,25 @@ def make_stockData(stockArgX):
     '''
     stockCashList = put_all_stock_into_cash(baseCodeList)
 
+    #如果使用成熟规则,则使用临时固定的  股票规则标记列表 //TODO 需要调整结构,自动根据表中的来
+    if (stockArgX.mustByCsvTF == True):
+        allList = stockArgX.mustByCsvRule
+    else:
+        allList = stockArgX.ruleNumListChoose + stockArgX.ruleNumListMust
+
+    '''
+      5.1 为当前所有stock增加股票规则标记
+    '''
+    add_stock_mark(stockCashList, allList, stockArgX)
 
     #如果使用成熟规则 则循环,否则只执行一次
     if(stockArgX.mustByCsvTF == True):
+        byCsvCount = 0
         stockArgX.ruleNumListChoose = [10]
-        topList = get_total_list()
+        topList = get_total_list(stockArgX)
         for mustList in topList:
+            byCsvCount = byCsvCount +1
+            print("自动筛选成熟规则个数为=============="+str(byCsvCount))
             stockArgX.ruleNumListMust = mustList
             code = make_stockData_by_choose(stockArgX,stockCashList)
             if code == 1:
@@ -739,19 +753,17 @@ def make_stockData_by_choose(stockArgX,stockCashList):
     # 根据集合list加载需要的规则对象
     ruleList = get_all_rule(allList)
 
-    '''
-    4.2获取所有的index数据放入内存中
-    '''
-    indexCashList = put_all_index_into_cash()
-    '''
-    4.3为所有指数增加规则TRUE FALSE
-    '''
-    add_ruleTF_for_index(indexCashList, allList)
+    if(stockArgX.indexOpen ==True):
+        '''
+        4.2获取所有的index数据放入内存中
+        '''
+        indexCashList = put_all_index_into_cash()
+        '''
+        4.3为所有指数增加规则TRUE FALSE
+        '''
+        add_ruleTF_for_index(indexCashList, allList)
 
-    '''
-    5.1 为当前所有stock增加股票规则标记
-    '''
-    add_stock_mark(stockCashList, allList, stockArgX)
+
 
     '''
     6.循环规则组合与股票标记一一对应 生成detail和total报表
