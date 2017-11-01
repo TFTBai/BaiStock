@@ -79,9 +79,22 @@ def get_strategy_income(baseStockInfo,date,stockArgX):
         if(day_count==1):
             continue
 
+        #特殊的 按收盘直接卖情况逻辑
+        if (stockArgX.sellIncomeByCloseTF == True):
+            if (day_count == stockArgX.sellCloseDay):
+                right_strategy.sell_success = True
+                sell_price = sell_detail['close'].tolist()[0]
+                right_strategy.buy_price = buy_price
+                right_strategy.sell_price = sell_price
+                right_strategy.strategy_income = (round(sell_price / buy_price, 5) * 100) - 100
+                right_strategy.sell_day = day_count
+                return right_strategy
+            else:
+                continue
+
         # 只有当卖出价格为0时候计算,避免覆盖
         if (sell_price == 0):
-            # 固定收益卖出价
+                # 固定收益卖出价
             if (stockArgX.sellIncomeTF == True):
                 sell_price = buy_price * commonUtil.get_multiple_by_percentage(stockArgX.sellIncome)
             # 按low收益卖出价
