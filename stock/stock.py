@@ -80,9 +80,9 @@ def start_stock_generator():
     stockArgX.groupByDaysTF = False
 
     # 是否使用开始日期参数开关
-    stockArgX.dateBeginTF = False
+    stockArgX.dateBeginTF = True
     # 开始日期参数
-    stockArgX.dateBeginRange = '2017-10-30'
+    stockArgX.dateBeginRange = '2017-11-01'
     # 是否使用结束日期参数开关
     stockArgX.dateEndTF = False
     # 结束日期参数
@@ -90,10 +90,10 @@ def start_stock_generator():
 
     ''' 规则参数 '''
     #成熟规则获取开关,开启时下面定义规则无效
-    stockArgX.mustByCsvTF = False
-    stockArgX.mustByCsvName = '2017-10-31-12-34全规则-d2c1.6 d6c3.3(1)'
+    stockArgX.mustByCsvTF = True
+    stockArgX.mustByCsvName = '2'
     stockArgX.mustByCsvRule = [1,2,3,5,6,7,8,10,11,13,19,21]
-    stockArgX.ruleNumListChoose = [11,13,21,19]
+    stockArgX.ruleNumListChoose = [11]
     stockArgX.ruleNumListMust = [1,10]
     # 组合规则参数
     # stockArgX.ruleNumListChoose = [11]
@@ -104,7 +104,7 @@ def start_stock_generator():
 
     ''' 策略参数 '''
     # 策略开关
-    stockArgX.strategy = True
+    stockArgX.strategy = False
 
 
     '''买入策略'''
@@ -121,7 +121,7 @@ def start_stock_generator():
     stockArgX.buyLineExpect = 0
 
     # 按收盘卖开关
-    stockArgX.sellIncomeByCloseTF = True
+    stockArgX.sellIncomeByCloseTF = False
     # 按收盘卖day几c
     stockArgX.sellCloseDay = 2
 
