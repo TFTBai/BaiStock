@@ -34,7 +34,7 @@ def get_day_list(day):
         day_list.append(day_list_index)
     return day_list
 
-day_list = get_day_list(6)
+day_list = get_day_list(1)
 
 '''
 添加默认排序
@@ -60,7 +60,7 @@ def getAllBaseNameOrder(day):
         nameList.append('day' + str(nameListIndex) + nameListStringOpen)
     return nameList
 
-allBaseNameOrder = getAllBaseNameOrder(6)
+allBaseNameOrder = getAllBaseNameOrder(1)
 
 
 
