@@ -70,8 +70,10 @@ def get_strategy_income(baseStockInfo,date,stockArgX):
                 if(day_count > stockArgX.buyLineWaitDays):
                     right_strategy.sell_success = False
                     return right_strategy
-                if(sell_detail['low'].tolist()[0] < buy_line_price):
+                if(sell_detail['low'].tolist()[0] <= buy_line_price):
                     buy_price = buy_line_price_expect
+                    if(sell_detail['open'].tolist()[0] <= buy_line_price):
+                        buy_price = sell_detail['open'].tolist()[0]
                 else:
                     continue
 
