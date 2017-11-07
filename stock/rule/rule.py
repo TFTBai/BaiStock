@@ -14,7 +14,7 @@ from calculate import calculate as cal
 '''
 def get_total_list(stockArgX):
     allList = []
-    df = pd.read_csv(con.detailPath + stockArgX.mustByCsvName+'.csv')
+    df = pd.read_csv(con.rulesPath + stockArgX.mustByCsvName+'.csv')
     ruleLists = df['rule']
     count = 0
     for ruleList in ruleLists:

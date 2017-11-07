@@ -16,7 +16,7 @@ def create_base():
 def create_stock_csv(codeStr):
     log.info("当前开始生成代码" + codeStr + "的CSV文件!")
     stock_data = ts.get_k_data(codeStr, start='2010-01-01', end='2016-12-31')
-    stock_data.to_csv(con.csvPath + codeStr + '.csv', index=False, encoding='utf-8')
+    stock_data.to_csv(con.csvPath + codeStr + '.csv', index=False, encoding='gbk')
 
 
 # 获取所有的code
@@ -184,5 +184,5 @@ def create_all_index_csv():
     for codeStr in con.baseIndexList:
         log.info("当前开始生成指数" + codeStr + "的CSV文件!")
         index_data = ts.get_k_data(codeStr, index=True, start='2010-01-01', end='2016-12-31')
-        index_data.to_csv(con.indexCsvPath + codeStr + '.csv', index=False, encoding='utf-8')
+        index_data.to_csv(con.indexCsvPath + codeStr + '.csv', index=False, encoding='gbk')
 

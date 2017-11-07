@@ -15,8 +15,8 @@ def init_csv():
     # bs.create_base()
     bs.create_all_stock_csv()
     bs.create_all_index_csv()
-    bs.add_index_derivative_data()
-    bs.add_stock_derivative_data()
+    # bs.add_index_derivative_data()
+    # bs.add_stock_derivative_data()
     # bs.update_all_stock()
     dateUtil.print_end_date(startDate)
     return
@@ -82,7 +82,7 @@ def start_stock_generator():
     # 是否使用开始日期参数开关
     stockArgX.dateBeginTF = True
     # 开始日期参数
-    stockArgX.dateBeginRange = '2017-11-01'
+    stockArgX.dateBeginRange = '2017-11-05'
     # 是否使用结束日期参数开关
     stockArgX.dateEndTF = False
     # 结束日期参数
@@ -91,9 +91,9 @@ def start_stock_generator():
     ''' 规则参数 '''
     #成熟规则获取开关,开启时下面定义规则无效
     stockArgX.mustByCsvTF = True
-    stockArgX.mustByCsvName = '2'
+    stockArgX.mustByCsvName = '4'
     stockArgX.mustByCsvRule = [1,2,3,5,6,7,8,10,11,13,19,21]
-    stockArgX.ruleNumListChoose = [11]
+    stockArgX.ruleNumListChoose = [11,13,21,19]
     stockArgX.ruleNumListMust = [1,10]
     # 组合规则参数
     # stockArgX.ruleNumListChoose = [11]
@@ -105,7 +105,6 @@ def start_stock_generator():
     ''' 策略参数 '''
     # 策略开关
     stockArgX.strategy = False
-
 
     '''买入策略'''
     #买入策略一
