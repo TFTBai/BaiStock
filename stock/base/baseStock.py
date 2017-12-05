@@ -159,7 +159,7 @@ def put_base_csv_code_into_cash(stockArgX):
     count = 0
     for code in allCode.code:
         # count = count+1
-        # if count > 50:
+        # if count > 10:
         #   return baseCodeList
         codeStr = str(code).zfill(6)
         baseCodeList.append(codeStr)

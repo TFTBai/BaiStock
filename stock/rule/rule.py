@@ -446,9 +446,10 @@ def use_the_choose_rule(df, list):
 def add_stock_mark(stockCashList, allList, stockArgX):
     count = 0
     for stockCash in stockCashList:
+        stockCashDataFrame = globals()[stockCash]
         count = count + 1
         print('开始为' + stockCash + '缓存增加规则TF,当前的数量是' + str(count))
-        globals()[stockCash] = use_the_choose_rule(globals()[stockCash], allList)
+        stockCashDataFrame = use_the_choose_rule(stockCashDataFrame, allList)
         if (stockArgX.indexOpen):
             '''
             对股票做大盘指数规则附加
@@ -456,7 +457,15 @@ def add_stock_mark(stockCashList, allList, stockArgX):
             # 获取股票代码的前两位
             stockCode = stockCash[9:11]
             dfIndex = get_right_indexCash(stockCode)
-            globals()[stockCash] = pd.merge(globals()[stockCash], dfIndex, how='left', on=['date'])
+            stockCashDataFrame = pd.merge(stockCashDataFrame, dfIndex, how='left', on=['date'])
+        # 9.是否进行日期筛选
+        if (stockArgX.dateBeginTF):
+            stockCashDataFrame = stockCashDataFrame[stockCashDataFrame['date'] > stockArgX.dateBeginRange]
+            stockCashDataFrame = stockCashDataFrame[stockCashDataFrame['date'] > stockArgX.dateBeginRange]
+        if (stockArgX.dateEndTF):
+            stockCashDataFrame = stockCashDataFrame[stockCashDataFrame['date'] < stockArgX.dateEndRange]
+        globals()[stockCash] = stockCashDataFrame
+
 
 
 '''
@@ -469,8 +478,7 @@ def get_TF_stock(stockCashList, brackets, ruleList):
     detailTempList = []
     # 5.循环所有的缓存csv列表,处理缓存数据
     for dfm in stockCashList:
-        # 复制一份缓存数据,以免影响后面的规则
-        dfc = copy.deepcopy(globals()[dfm])
+        dfc = globals()[dfm]
         # 6.根据规则列表中规则是ture还是false来筛选符合情况的股票
         for ruleNum in brackets:
             for rule in ruleList:
