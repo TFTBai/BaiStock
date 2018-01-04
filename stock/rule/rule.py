@@ -734,7 +734,6 @@ def make_stockData(stockArgX):
             code = make_stockData_by_choose(stockArgX,stockCashList)
             if code == 1:
                 print("已找到符合条件的stock 筛选程序运行完毕! ")
-            break
     else:
         make_stockData_by_choose(stockArgX,stockCashList)
 
