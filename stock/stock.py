@@ -15,8 +15,8 @@ def init_csv():
     # bs.create_base()
     bs.create_all_stock_csv()
     bs.create_all_index_csv()
-    # bs.add_index_derivative_data()
-    # bs.add_stock_derivative_data()
+    bs.add_index_derivative_data()
+    bs.add_stock_derivative_data()
     # bs.update_all_stock()
     dateUtil.print_end_date(startDate)
     return
@@ -82,7 +82,7 @@ def start_stock_generator():
     # 是否使用开始日期参数开关
     stockArgX.dateBeginTF = True
     # 开始日期参数
-    stockArgX.dateBeginRange = '2017-11-3'
+    stockArgX.dateBeginRange = '2018-01-03'
     # 是否使用结束日期参数开关
     stockArgX.dateEndTF = False
     # 结束日期参数
