@@ -5,12 +5,10 @@ from base import baseStock as bs
 from rule import rule
 from common import dateUtil
 
-'''
-初始化股票基础数据
-'''
-
-
 def init_csv():
+    '''
+    初始化股票基础数据
+    '''
     startDate = dateUtil.print_date()
     # bs.create_base()
     bs.create_all_stock_csv()
@@ -21,13 +19,10 @@ def init_csv():
     dateUtil.print_end_date(startDate)
     return
 
-
-'''
-更新股票基础数据
-'''
-
-
 def update_csv():
+    '''
+    更新股票基础数据
+    '''
     startDate = dateUtil.print_date()
     bs.add_index_derivative_data()
     bs.add_stock_derivative_data()
@@ -35,29 +30,16 @@ def update_csv():
     dateUtil.print_end_date(startDate)
     return
 
-
-
-'''
-启动股票生成器
-'''
-
-
 def start_stock_generator():
-    startDate = dateUtil.print_date()
+    '''
+    启动股票生成器
+    '''
+
     # 定义参数类
     class stockArg:
         # total报表命名
         totalCsvName = ''
-        # 组合规则
-        ruleNumListChoose = []
-        # 必须规则
-        ruleNumListMust = []
-        # 是否按划定日期范围
-        dateRangeTF = False
-        # 日期范围时间
-        dateRange = ''
-        # 是否生成detail表
-        detail = False
+
     stockArgX = stockArg()
 
     '''股票类型过滤'''
@@ -82,7 +64,7 @@ def start_stock_generator():
     # 是否使用开始日期参数开关
     stockArgX.dateBeginTF = True
     # 开始日期参数
-    stockArgX.dateBeginRange = '2018-01-03'
+    stockArgX.dateBeginRange = str(dateUtil.get_date_date())
     # 是否使用结束日期参数开关
     stockArgX.dateEndTF = False
     # 结束日期参数
@@ -95,20 +77,15 @@ def start_stock_generator():
     stockArgX.mustByCsvRule = [1,2,3,5,6,7,8,10,11,13,19,21]
     stockArgX.ruleNumListChoose = [11,13,21,19]
     stockArgX.ruleNumListMust = [1,10]
-    # 组合规则参数
-    # stockArgX.ruleNumListChoose = [11]
-    # 必选规则参数
-    # stockArgX.ruleNumListMust = [1,10,19,20]
+
     # 大盘规则开关
     stockArgX.indexOpen = False
 
-    ''' 策略参数 '''
+    ''' 策略参数开始 '''
     # 策略开关
     stockArgX.strategy = False
 
     '''买入策略'''
-    #买入策略一
-
     #买入策略二
     # 买入线 开关
     stockArgX.buyLineTF = False
@@ -119,6 +96,7 @@ def start_stock_generator():
     # 买入线期望修正
     stockArgX.buyLineExpect = 0
 
+    '''卖出策略'''
     # 按收盘卖开关
     stockArgX.sellIncomeByCloseTF = False
     # 按收盘卖day几c
@@ -142,11 +120,15 @@ def start_stock_generator():
     stockArgX.stopLineExpect = 0
     # 策略失败割肉交易日参数(day几 收盘割肉卖)
     stockArgX.cutMeatDay = 15
+    ''' 策略参数结束 '''
 
+    ''' 是否发送邮件开关'''
+    stockArgX.TFmail = True
+    startDate = dateUtil.print_date()
     # 执行规则数据生成器方法！
     rule.make_stockData(stockArgX)
     dateUtil.print_end_date(startDate)
 
 # init_csv()
-update_csv()
+# update_csv()
 start_stock_generator()

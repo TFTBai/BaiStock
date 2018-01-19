@@ -2,37 +2,18 @@ from base import baseStock as bs
 import pandas as pd
 from common import constant as con
 from common import commonUtil
-import copy
-import time
 from view import view
 from common import dateUtil
 from simulation import simulation
 from calculate import calculate as cal
+from common import mailUtil
 
-'''
-获取成熟规则列表
-'''
-def get_total_list(stockArgX):
-    allList = []
+def get_rules_df(stockArgX):
+    '''
+    获取成熟规则列表
+    '''
     df = pd.read_csv(con.rulesPath + stockArgX.mustByCsvName+'.csv')
-    ruleLists = df['rule']
-    count = 0
-    for ruleList in ruleLists:
-        count = count + 1
-        ruleList = ruleList.replace('rule', '')
-        ruleList = ruleList.replace('+10', '')
-        ruleList = ruleList.replace('+20', '')
-        ruleList = ruleList.replace('+', ',')
-        ruleList = ruleList.replace('-', ',')
-        ruleList = ruleList.replace(',', '', 1)
-        list(ruleList)
-        tempList = ruleList.split(',')
-        rightList = []
-        for rule in tempList:
-            ruleInt = int(rule)
-            rightList.append(ruleInt)
-        allList.append(rightList)
-    return allList
+    return df
 
 def get_all_rule(allList):
     class rule:
@@ -438,12 +419,20 @@ def use_the_choose_rule(df, list):
 
     return df
 
-'''
-增加股票规则标记
-'''
 
 
-def add_stock_mark(stockCashList, allList, stockArgX):
+
+def add_stock_mark(stockCashList, stockArgX):
+    '''
+    增加股票规则标记
+    '''
+
+    #如果使用成熟规则,则使用临时固定的  股票规则标记列表 //TODO 需要调整结构,自动根据表中的来
+    if (stockArgX.mustByCsvTF == True):
+        allList = stockArgX.mustByCsvRule
+    else:
+        allList = stockArgX.ruleNumListChoose + stockArgX.ruleNumListMust
+
     count = 0
     for stockCash in stockCashList:
         stockCashDataFrame = globals()[stockCash]
@@ -460,8 +449,7 @@ def add_stock_mark(stockCashList, allList, stockArgX):
             stockCashDataFrame = pd.merge(stockCashDataFrame, dfIndex, how='left', on=['date'])
         # 9.是否进行日期筛选
         if (stockArgX.dateBeginTF):
-            stockCashDataFrame = stockCashDataFrame[stockCashDataFrame['date'] > stockArgX.dateBeginRange]
-            stockCashDataFrame = stockCashDataFrame[stockCashDataFrame['date'] > stockArgX.dateBeginRange]
+            stockCashDataFrame = stockCashDataFrame[stockCashDataFrame['date'] >= stockArgX.dateBeginRange]
         if (stockArgX.dateEndTF):
             stockCashDataFrame = stockCashDataFrame[stockCashDataFrame['date'] < stockArgX.dateEndRange]
         globals()[stockCash] = stockCashDataFrame
@@ -566,6 +554,7 @@ def generate_report_form(ChooseCombinations, ruleNumListMust, ruleList, stockCas
                 '''
                 # 将某规则的收益total数据添加到total报表中
                 totalReportForm = totalReportForm.append(totalProfit)
+
     if(len(totalReportForm)>0):
         print('筛选成功,生成totalcsv文件开始!')
         dateUtil.print_date()
@@ -578,12 +567,12 @@ def generate_report_form(ChooseCombinations, ruleNumListMust, ruleList, stockCas
         return 1
 
 
-'''
-获取所有的stock数据命名放入内存中
-'''
 
 
 def put_all_stock_into_cash(baseCodeList):
+    '''
+    获取所有的stock数据命名放入内存中
+    '''
     count = 0
     # 声明一个dfnamelist用于存储所有的 stock内存名称
     stockCashList = []
@@ -703,39 +692,89 @@ def add_strategy_income(df,rightStockStrategy,stockArgX,dfname):
 def make_stockData(stockArgX):
 
     '''
-    3.获取base.csv中所有的code
+    1.获取base.csv中所有的code
     '''
     baseCodeList = bs.put_base_csv_code_into_cash(stockArgX)
+
     '''
-    4.1获取所有的stock数据命名放入内存中,返回stock内存数据名称list
+    2获取所有的stock数据命名放入内存中,返回stock内存数据名称list
     '''
     stockCashList = put_all_stock_into_cash(baseCodeList)
 
-    #如果使用成熟规则,则使用临时固定的  股票规则标记列表 //TODO 需要调整结构,自动根据表中的来
-    if (stockArgX.mustByCsvTF == True):
-        allList = stockArgX.mustByCsvRule
-    else:
-        allList = stockArgX.ruleNumListChoose + stockArgX.ruleNumListMust
+    '''
+    3 为当前所有stock增加股票规则标记
+    '''
+    add_stock_mark(stockCashList, stockArgX)
 
     '''
-      5.1 为当前所有stock增加股票规则标记
+    4.执行某种模式的股票筛选
     '''
-    add_stock_mark(stockCashList, allList, stockArgX)
+    make_stock_by_mode(stockCashList,stockArgX)
+    '''
+    5.发送邮件
+    '''
+    if(stockArgX.TFmail==True):
+        make_email(stockArgX)
 
+
+def make_stock_by_mode(stockCashList,stockArgX):
+    '''
+    按照列表模式或者组合模式做筛选
+    '''
     #如果使用成熟规则 则循环,否则只执行一次
     if(stockArgX.mustByCsvTF == True):
-        byCsvCount = 0
         stockArgX.ruleNumListChoose = [10]
-        topList = get_total_list(stockArgX)
-        for mustList in topList:
-            byCsvCount = byCsvCount +1
-            print("自动筛选成熟规则个数为=============="+str(byCsvCount))
-            stockArgX.ruleNumListMust = mustList
+        #获取成熟规则列表
+        rulesDataframe = get_rules_df(stockArgX)
+        for index in rulesDataframe.index:
+            print("开始筛选的规则排名为==============" + str(index+1))
+            #组装StockArgX
+            assembleStockArgX(rulesDataframe,stockArgX,index)
+            #按规则参数生成股票数据
             code = make_stockData_by_choose(stockArgX,stockCashList)
             if code == 1:
                 print("已找到符合条件的stock 筛选程序运行完毕! ")
     else:
+        #按规则参数生成股票数据
         make_stockData_by_choose(stockArgX,stockCashList)
+
+
+def assembleStockArgX(rulesDataframe,stockArgX,index):
+    '''组装StockArgX'''
+    ranking = index + 1
+    ruleName = rulesDataframe.loc[index].rule
+    stockArgX.ranking = ranking
+    stockArgX.ruleName = ruleName
+    stockArgX.ruleExpectIncome = float(rulesDataframe.loc[index][5:20].sort_values(ascending=False)[0:1][0])
+    stockArgX.ruleHoldDay = int(rulesDataframe.loc[index][20:34].sort_values(ascending=False)[0:1].index[0].replace('d','').replace('cZ',''))
+    stockArgX.ruleExpectZ = float(rulesDataframe.loc[index][20:34].sort_values(ascending=False)[0:1][0])
+    stockArgX.ruleDetailInfo = str(rulesDataframe.loc[index])
+    #从ruleName中提取rule
+    ruleName = ruleName.replace('rule', '')
+    ruleName = ruleName.replace('+10', '')
+    ruleName = ruleName.replace('+20', '')
+    ruleName = ruleName.replace('+', ',')
+    ruleName = ruleName.replace('-', ',')
+    ruleName = ruleName.replace(',', '', 1)
+    tempList = ruleName.split(',')
+    rightRule = []
+    for rule in tempList:
+        ruleInt = int(rule)
+        rightRule.append(ruleInt)
+    stockArgX.ruleNumListMust = rightRule
+    return stockArgX
+
+'''
+制作邮件内容并且发送
+'''
+
+def make_email(stockArgX):
+    title = '筛选结果:'+stockArgX.dateBeginRange
+    msg = '300267'+'排名:'+str(stockArgX.ranking)+' '+'day'+str(stockArgX.ruleHoldDay) +' '\
+          +'xxxxx卖 '+'预期收益:'+str(stockArgX.ruleExpectIncome)+' '+'得分值:'+str(stockArgX.ruleExpectZ)+'\n'\
+          +'筛选日期:'+stockArgX.dateBeginRange+'\n'\
+          +'规则详细信息:\n'+str(stockArgX.ruleDetailInfo)
+    mailUtil.sendEmail(title,msg)
 
 '''
 按规则参数生成股票数据
@@ -768,8 +807,6 @@ def make_stockData_by_choose(stockArgX,stockCashList):
         4.3为所有指数增加规则TRUE FALSE
         '''
         add_ruleTF_for_index(indexCashList, allList)
-
-
 
     '''
     6.循环规则组合与股票标记一一对应 生成detail和total报表

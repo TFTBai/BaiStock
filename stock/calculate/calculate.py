@@ -163,10 +163,3 @@ def get_lost_data(stock_data, codeStr, index):
     stock_data_lost = stock_data_lost[stock_data_lost['date'] > '2016-12-31']
     return stock_data.append(stock_data_lost)
 
-# print(compensate_formula(-2.4444))
-# 10
-#10.807 10.256 -5.098 -5.372
-#23.008 22.498 -2.216 -2.266
-# 10.74 10.18 -5.2141 -5.501
-# 22.5 21.95 -2.4444 -2.506
-

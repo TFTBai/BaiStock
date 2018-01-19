@@ -144,13 +144,10 @@ def update_all_stock():
             log.info('已重新生成' + codeStr + '的stock数据,生成总数量' + str(count))
     log.info("所有stock数据更新完毕!")
 
-
-'''
-获取并生成所有的base数据code放入内存中
-'''
-
-
 def put_base_csv_code_into_cash(stockArgX):
+    '''
+    获取并生成所有的base数据code放入内存中
+    '''
     # 0.声明base csv缓存用来存储code数据
     baseCodeList = []
     # 1.读取base文件获取所有的csv文件名=code
@@ -158,9 +155,9 @@ def put_base_csv_code_into_cash(stockArgX):
     # 2.循环所有的code
     count = 0
     for code in allCode.code:
-        # count = count+1
-        # if count > 10:
-        #   return baseCodeList
+        count = count+1
+        if count > 1:
+          return baseCodeList
         codeStr = str(code).zfill(6)
         # if codeStr != '601933':
         #     continue
