@@ -162,9 +162,9 @@ def put_base_csv_code_into_cash(stockArgX):
     # 2.循环所有的code
     count = 0
     for code in allCode.code:
-        count = count+1
-        if count > 1:
-          return baseCodeList
+        # count = count+1
+        # if count > 1:
+        #   return baseCodeList
         codeStr = str(code).zfill(6)
         # if codeStr != '601933':
         #     continue
