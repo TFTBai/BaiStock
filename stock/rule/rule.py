@@ -739,7 +739,7 @@ def make_stock_by_mode(stockCashList,stockArgX):
                     #查询code对应的股票名称
                     base_df = bs.get_all_code()
                     base_df = base_df[base_df['code']==code]
-                    codeName = base_df.name[0]
+                    codeName = base_df['name'].values[0]
                     codeInfo = stockArgX.codeInfo
                     codeInfo = codeInfo+ str(code).zfill(6)+' '+codeName+' '
                     stockArgX.codeInfo = codeInfo
