@@ -39,6 +39,8 @@ def start_stock_generator():
     class stockArg:
         # total报表命名
         totalCsvName = ''
+        # code信息
+        codeInfo = ''
 
     stockArgX = stockArg()
 
@@ -124,11 +126,13 @@ def start_stock_generator():
 
     ''' 是否发送邮件开关'''
     stockArgX.TFmail = True
+    #是否成功筛选
+    stockArgX.TFHaveResult = False
     startDate = dateUtil.print_date()
     # 执行规则数据生成器方法！
     rule.make_stockData(stockArgX)
     dateUtil.print_end_date(startDate)
 
 # init_csv()
-# update_csv()
+update_csv()
 start_stock_generator()

@@ -564,8 +564,7 @@ def generate_report_form(ChooseCombinations, ruleNumListMust, ruleList, stockCas
             dateUtil.get_date_date()) + dateUtil.get_hour_and_minute_str() + 'total' + totalCsvName + '.csv',
                                index=False)
         print('生成csv文件结束!')
-        return 1
-
+        stockArgX.TFHaveResult = True
 
 
 
@@ -714,7 +713,7 @@ def make_stockData(stockArgX):
     5.发送邮件
     '''
     if(stockArgX.TFmail==True):
-        make_email(stockArgX)
+        make_stock_email(stockArgX)
 
 
 def make_stock_by_mode(stockCashList,stockArgX):
@@ -731,9 +730,20 @@ def make_stock_by_mode(stockCashList,stockArgX):
             #组装StockArgX
             assembleStockArgX(rulesDataframe,stockArgX,index)
             #按规则参数生成股票数据
-            code = make_stockData_by_choose(stockArgX,stockCashList)
-            if code == 1:
-                print("已找到符合条件的stock 筛选程序运行完毕! ")
+            make_stockData_by_choose(stockArgX,stockCashList)
+            if (stockArgX.TFHaveResult == True):
+                print("已找到符合条件的stock 筛选程序运行完毕,开始获取detail信息! ")
+                tempDetail = stockArgX.detail
+                codeList = tempDetail['code'].tolist()
+                for code in codeList:
+                    #查询code对应的股票名称
+                    base_df = bs.get_all_code()
+                    base_df = base_df[base_df['code']==code]
+                    codeName = base_df.name[0]
+                    codeInfo = stockArgX.codeInfo
+                    codeInfo = codeInfo+ str(code).zfill(6)+' '+codeName+' '
+                    stockArgX.codeInfo = codeInfo
+                break
     else:
         #按规则参数生成股票数据
         make_stockData_by_choose(stockArgX,stockCashList)
@@ -768,13 +778,14 @@ def assembleStockArgX(rulesDataframe,stockArgX,index):
 制作邮件内容并且发送
 '''
 
-def make_email(stockArgX):
-    title = '筛选结果:'+stockArgX.dateBeginRange
-    msg = '300267'+'排名:'+str(stockArgX.ranking)+' '+'day'+str(stockArgX.ruleHoldDay) +' '\
-          +'xxxxx卖 '+'预期收益:'+str(stockArgX.ruleExpectIncome)+' '+'得分值:'+str(stockArgX.ruleExpectZ)+'\n'\
+def make_stock_email(stockArgX):
+    title ='筛选结果:'+stockArgX.dateBeginRange
+    msg = stockArgX.codeInfo +' '+'排名:'+str(stockArgX.ranking)+' '+'day'+str(stockArgX.ruleHoldDay) +' '\
+          +'xxxxx卖\n'+'预期收益:'+str(stockArgX.ruleExpectIncome)+' '+'得分值:'+str(stockArgX.ruleExpectZ)+'\n'\
           +'筛选日期:'+stockArgX.dateBeginRange+'\n'\
           +'规则详细信息:\n'+str(stockArgX.ruleDetailInfo)
     mailUtil.sendEmail(title,msg)
+    print(msg)
 
 '''
 按规则参数生成股票数据
@@ -811,5 +822,4 @@ def make_stockData_by_choose(stockArgX,stockCashList):
     '''
     6.循环规则组合与股票标记一一对应 生成detail和total报表
     '''
-    sucessCode = generate_report_form(ChooseCombinations, ruleNumListMust, ruleList, stockCashList, stockArgX)
-    return sucessCode
+    generate_report_form(ChooseCombinations, ruleNumListMust, ruleList, stockCashList, stockArgX)

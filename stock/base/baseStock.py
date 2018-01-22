@@ -24,6 +24,13 @@ def get_all_code():
     df = pd.read_csv(con.basePath + 'base.csv', encoding='gbk')
     return df
 
+# 根据股票代码查询股票名称
+def get_code_name(code):
+    base_df = get_all_code()
+
+    code_df = base_df['code']=code
+
+
 # 获取特定的code列表
 def get_code(stockArgX):
     df = pd.read_csv(con.basePath + 'base.csv', encoding='gbk')

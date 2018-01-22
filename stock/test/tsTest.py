@@ -1,6 +1,7 @@
 import tushare as ts
 import pandas as pd
 from common import constant as con
+from base import baseStock as bs
 
 
 # 按时间查询`
@@ -32,7 +33,7 @@ def get_stock_basics():
 # 获取今日数据
 def get_today_all():
     df = ts.get_today_all()
-    df.to_csv("D:/workSpace/python/stock/base/today.csv", encoding='utf-8', index=False)
+    df.to_csv("D:/workSpace/python/stock/base/today.csv", encoding='dutf-8', index=False)
     return df
 
 
@@ -57,3 +58,5 @@ def get_day_count():
     daylist = [1,2,2,3,3,3,5,5,5,1]
     d = set(daylist)
     print(d)
+
+
