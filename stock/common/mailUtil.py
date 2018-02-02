@@ -12,7 +12,7 @@ def sendEmail(title,msg):
     # 发送邮箱
     sender = 'wtwtawt@163.com'
     # 接受邮箱
-    receiver = ['wtwtawt@163.com','2451333873@qq.com','282307642@qq.com','550953717@qq.com','663135128@qq.com']
+    receiver = ['wtwtawt@163.com','2451333873@qq.com','282307642@qq.com','550953717@qq.com','663135128@qq.com','qiaomu8559968@126.com']
 
     # 创建一个带附件的实例
     message = MIMEMultipart()
