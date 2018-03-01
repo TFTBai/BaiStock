@@ -733,7 +733,7 @@ def make_stock_by_mode(stockCashList,stockArgX):
             make_stockData_by_choose(stockArgX,stockCashList)
             if (stockArgX.TFHaveResult == True):
                 print("已找到符合条件的stock 筛选程序运行完毕,开始获取detail信息! ")
-                tempDetail = stockArgX.detail
+                tempDetail = stockArgX.tempDetail
                 codeList = tempDetail['code'].tolist()
                 for code in codeList:
                     #查询code对应的股票名称

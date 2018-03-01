@@ -316,5 +316,5 @@ def generate_detail_csv(detailTempList, stockArgX, ruleName):
             tempDetail.to_csv(con.detailPath + str(dateUtil.get_date_date()) + dateUtil.get_hour_and_minute_str() + ruleName + 'detail.csv',
                               index=False)
         #为邮件保存临时detail
-        stockArgX.detail = tempDetail
+        stockArgX.tempDetail = tempDetail
         return tempDetail

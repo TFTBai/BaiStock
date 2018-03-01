@@ -1,8 +1,14 @@
 import pandas as pd
 import numpy as np
+from common import constant as con
 
-df = pd.DataFrame(np.arange(16).reshape(4,4),index=[1,2,3,4],columns=['a','b','c','d'])
-print(df['a'].tolist())
+df = pd.read_csv(con.memberPath + 'member.csv', encoding='gbk')
+
+print(list(df.email))
+
+
+# df = pd.DataFrame(np.arange(16).reshape(4,4),index=[1,2,3,4],columns=['a','b','c','d'])
+# print(df['a'].tolist())
 # df = pd.read_csv('D:\workspace\BaiStock\data\\rulesCsv\gongshiv2.csv')
 # for index in df.index:
 #     print(str(df.loc[index]))
