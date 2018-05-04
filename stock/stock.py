@@ -67,6 +67,7 @@ def start_stock_generator():
     stockArgX.dateBeginTF = True
     # 开始日期参数
     stockArgX.dateBeginRange = str(dateUtil.get_date_date())
+    # stockArgX.dateBeginRange = '2010-04-03'
     # 是否使用结束日期参数开关
     stockArgX.dateEndTF = False
     # 结束日期参数
@@ -128,6 +129,8 @@ def start_stock_generator():
     stockArgX.TFmail = True
     #是否成功筛选
     stockArgX.TFHaveResult = False
+    #是否已经赋值第一排名信息
+    stockArgX.TFHaveHighStock = False
     startDate = dateUtil.print_date()
     # 执行规则数据生成器方法！
     rule.make_stockData(stockArgX)

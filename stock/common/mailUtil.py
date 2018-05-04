@@ -15,7 +15,7 @@ def sendEmail(title,msg):
     sender = 'wtwtawt@163.com'
     # 接受邮箱
     receiver = list(pd.read_csv(con.memberPath + 'member.csv', encoding='gbk').email)
-    #,'2451333873@qq.com','282307642@qq.com','550953717@qq.com','663135128@qq.com','qiaomu8559968@126.com','629787500@qq.com','345131673@qq.com','34702335@qq.com','47662233@qq.com','yu.liu@cenwaymaterials.com','396747328@qq.com'
+    # receiver = 'wtwtawt@163.com'
 
     # 创建一个带附件的实例
     message = MIMEMultipart()

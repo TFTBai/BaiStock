@@ -565,6 +565,8 @@ def generate_report_form(ChooseCombinations, ruleNumListMust, ruleList, stockCas
                                index=False)
         print('生成csv文件结束!')
         stockArgX.TFHaveResult = True
+    if (len(totalReportForm) == 0):
+        stockArgX.TFHaveResult = False
 
 
 
@@ -722,43 +724,27 @@ def make_stock_by_mode(stockCashList,stockArgX):
     '''
     #如果使用成熟规则 则循环,否则只执行一次
     if(stockArgX.mustByCsvTF == True):
+        stockArgX.sumRuleCount = 0
+        stockArgX.sumStockCount = 0
         stockArgX.ruleNumListChoose = [10]
         #获取成熟规则列表
         rulesDataframe = get_rules_df(stockArgX)
         for index in rulesDataframe.index:
             print("开始筛选的规则排名为==============" + str(index+1))
-            #组装StockArgX
-            assembleStockArgX(rulesDataframe,stockArgX,index)
+
+            assembleRuleNumListMust(rulesDataframe, stockArgX, index)
             #按规则参数生成股票数据
             make_stockData_by_choose(stockArgX,stockCashList)
-            if (stockArgX.TFHaveResult == True):
-                print("已找到符合条件的stock 筛选程序运行完毕,开始获取detail信息! ")
-                tempDetail = stockArgX.tempDetail
-                codeList = tempDetail['code'].tolist()
-                for code in codeList:
-                    #查询code对应的股票名称
-                    base_df = bs.get_all_code()
-                    base_df = base_df[base_df['code']==code]
-                    codeName = base_df['name'].values[0]
-                    codeInfo = stockArgX.codeInfo
-                    codeInfo = codeInfo+ str(code).zfill(6)+' '+codeName+' '
-                    stockArgX.codeInfo = codeInfo
-                break
+            # 组装StockArgX
+            assembleStockArgX(rulesDataframe, stockArgX, index)
     else:
         #按规则参数生成股票数据
         make_stockData_by_choose(stockArgX,stockCashList)
-
-
-def assembleStockArgX(rulesDataframe,stockArgX,index):
-    '''组装StockArgX'''
-    ranking = index + 1
+'''
+组装赋值RuleNumListMust
+'''
+def assembleRuleNumListMust(rulesDataframe,stockArgX,index):
     ruleName = rulesDataframe.loc[index].rule
-    stockArgX.ranking = ranking
-    stockArgX.ruleName = ruleName
-    stockArgX.ruleExpectIncome = float(rulesDataframe.loc[index][5:20].sort_values(ascending=False)[0:1][0])
-    stockArgX.ruleHoldDay = int(rulesDataframe.loc[index][20:34].sort_values(ascending=False)[0:1].index[0].replace('d','').replace('cZ',''))
-    stockArgX.ruleExpectZ = float(rulesDataframe.loc[index][20:34].sort_values(ascending=False)[0:1][0])
-    stockArgX.ruleDetailInfo = str(rulesDataframe.loc[index])
     #从ruleName中提取rule
     ruleName = ruleName.replace('rule', '')
     ruleName = ruleName.replace('+10', '')
@@ -772,6 +758,41 @@ def assembleStockArgX(rulesDataframe,stockArgX,index):
         ruleInt = int(rule)
         rightRule.append(ruleInt)
     stockArgX.ruleNumListMust = rightRule
+
+
+def assembleStockArgX(rulesDataframe,stockArgX,index):
+    #如果有筛选成功,则计数
+    if (stockArgX.TFHaveResult == True):
+        # 规则数计数
+        stockArgX.sumRuleCount = stockArgX.sumRuleCount + 1
+        # 股票数计数
+        stockArgX.sumStockCount = stockArgX.sumStockCount + stockArgX.tempDetail.iloc[:, 0].size
+
+        # 如果还没赋值第一个排名,那么赋值
+        if (stockArgX.TFHaveHighStock == False):
+            ruleName = rulesDataframe.loc[index].rule
+            '''组装邮件StockArgX参数'''
+            ranking = index + 1
+            stockArgX.ranking = ranking
+            stockArgX.ruleName = ruleName
+            stockArgX.ruleExpectIncome = float(rulesDataframe.loc[index][5:20].sort_values(ascending=False)[0:1][0])
+            stockArgX.ruleHoldDay = int(
+                rulesDataframe.loc[index][20:34].sort_values(ascending=False)[0:1].index[0].replace('d', '').replace(
+                    'cZ', ''))
+            stockArgX.ruleExpectZ = float(rulesDataframe.loc[index][20:34].sort_values(ascending=False)[0:1][0])
+            stockArgX.ruleDetailInfo = str(rulesDataframe.loc[index])
+            print("已找到符合条件的stock 筛选程序运行完毕,开始获取detail信息! ")
+            tempDetail = stockArgX.tempDetail
+            codeList = tempDetail['code'].tolist()
+            for code in codeList:
+                # 查询code对应的股票名称
+                base_df = bs.get_all_code()
+                base_df = base_df[base_df['code'] == code]
+                codeName = base_df['name'].values[0]
+                codeInfo = stockArgX.codeInfo
+                codeInfo = codeInfo + str(code).zfill(6) + ' ' + codeName + ' '
+                stockArgX.codeInfo = codeInfo
+            stockArgX.TFHaveHighStock = True
     return stockArgX
 
 '''
@@ -780,10 +801,14 @@ def assembleStockArgX(rulesDataframe,stockArgX,index):
 
 def make_stock_email(stockArgX):
     title ='筛选结果:'+stockArgX.dateBeginRange
-    msg = stockArgX.codeInfo +' '+'排名:'+str(stockArgX.ranking)+' '+'day'+str(stockArgX.ruleHoldDay) +' '\
-          +'xxxxx卖\n'+'预期收益:'+str(stockArgX.ruleExpectIncome)+' '+'得分值:'+str(stockArgX.ruleExpectZ)+'\n'\
-          +'筛选日期:'+stockArgX.dateBeginRange+'\n'\
-          +'规则详细信息:\n'+str(stockArgX.ruleDetailInfo)
+    msg = "今日无入选股票,enjoy the life!^_^"
+    if(stockArgX.TFHaveHighStock==True):
+        msg = stockArgX.codeInfo +' '+'排名:'+str(stockArgX.ranking)+' '+'day'+str(stockArgX.ruleHoldDay) +' '\
+              +'xxxxx卖\n'+'预期收益:'+str(stockArgX.ruleExpectIncome)+' '+'得分值:'+str(stockArgX.ruleExpectZ)+'\n'\
+              +'筛选日期:\n'+stockArgX.dateBeginRange+'\n'\
+              +'今日入选总规则数:\n'+str(stockArgX.sumRuleCount)+'\n'\
+              +'今日入选总股票数:\n'+str(stockArgX.sumStockCount)+'\n'\
+              +'规则详细信息:\n'+str(stockArgX.ruleDetailInfo)
     mailUtil.sendEmail(title,msg)
     print(msg)
 
