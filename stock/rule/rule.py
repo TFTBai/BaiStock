@@ -451,7 +451,7 @@ def add_stock_mark(stockCashList, stockArgX):
         if (stockArgX.dateBeginTF):
             stockCashDataFrame = stockCashDataFrame[stockCashDataFrame['date'] >= stockArgX.dateBeginRange]
         if (stockArgX.dateEndTF):
-            stockCashDataFrame = stockCashDataFrame[stockCashDataFrame['date'] < stockArgX.dateEndRange]
+            stockCashDataFrame = stockCashDataFrame[stockCashDataFrame['date'] <= stockArgX.dateEndRange]
         globals()[stockCash] = stockCashDataFrame
 
 

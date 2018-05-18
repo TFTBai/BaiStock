@@ -10,11 +10,11 @@ def init_csv():
     初始化股票基础数据
     '''
     startDate = dateUtil.print_date()
-    # bs.create_base()
+    bs.create_base()
     bs.create_all_stock_csv()
     bs.create_all_index_csv()
-    bs.add_index_derivative_data()
-    bs.add_stock_derivative_data()
+    # bs.add_index_derivative_data()
+    # bs.add_stock_derivative_data()
     # bs.update_all_stock()
     dateUtil.print_end_date(startDate)
     return
@@ -24,6 +24,7 @@ def update_csv():
     更新股票基础数据
     '''
     startDate = dateUtil.print_date()
+    bs.create_base()
     bs.add_index_derivative_data()
     bs.add_stock_derivative_data()
     # bs.update_all_stock()
@@ -71,7 +72,7 @@ def start_stock_generator():
     # 是否使用结束日期参数开关
     stockArgX.dateEndTF = False
     # 结束日期参数
-    stockArgX.dateEndRange = '2017-11-23'
+    stockArgX.dateEndRange = '2018-04-18'
 
     ''' 规则参数 '''
     #成熟规则获取开关,开启时下面定义规则无效

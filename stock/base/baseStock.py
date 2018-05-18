@@ -1,6 +1,6 @@
 import tushare as ts
 import pandas as pd
-from common import mylog as log
+from common import mylog as log, dateUtil
 from calculate import calculate as cal
 from common import constant as con
 
@@ -11,25 +11,16 @@ def create_base():
     stock_data = ts.get_today_all()
     stock_data.to_csv(con.basePath + 'base.csv', encoding='gbk')
 
-
 # 查询单stock历史所有数据
 def create_stock_csv(codeStr):
     log.info("当前开始生成代码" + codeStr + "的CSV文件!")
-    stock_data = ts.get_k_data(codeStr, start='2010-01-01', end='2016-12-31')
+    stock_data = ts.get_k_data(codeStr, start='2010-01-01', end=str(dateUtil.get_date_date()))
     stock_data.to_csv(con.csvPath + codeStr + '.csv', index=False, encoding='gbk')
-
 
 # 获取所有的code
 def get_all_code():
     df = pd.read_csv(con.basePath + 'base.csv', encoding='gbk')
     return df
-
-# 根据股票代码查询股票名称
-def get_code_name(code):
-    base_df = get_all_code()
-
-    code_df = base_df['code']=code
-
 
 # 获取特定的code列表
 def get_code(stockArgX):
@@ -189,6 +180,6 @@ def get_today_stock():
 def create_all_index_csv():
     for codeStr in con.baseIndexList:
         log.info("当前开始生成指数" + codeStr + "的CSV文件!")
-        index_data = ts.get_k_data(codeStr, index=True, start='2010-01-01', end='2016-12-31')
+        index_data = ts.get_k_data(codeStr, index=True, start='2010-01-01', end=str(dateUtil.get_date_date()))
         index_data.to_csv(con.indexCsvPath + codeStr + '.csv', index=False, encoding='gbk')
 
