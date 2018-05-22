@@ -24,7 +24,7 @@ def update_csv():
     更新股票基础数据
     '''
     startDate = dateUtil.print_date()
-    bs.create_base()
+    # bs.create_base()
     bs.add_index_derivative_data()
     bs.add_stock_derivative_data()
     # bs.update_all_stock()
@@ -68,11 +68,11 @@ def start_stock_generator():
     stockArgX.dateBeginTF = True
     # 开始日期参数
     stockArgX.dateBeginRange = str(dateUtil.get_date_date())
-    # stockArgX.dateBeginRange = '2010-04-03'
+    # stockArgX.dateBeginRange = '2018-05-21'
     # 是否使用结束日期参数开关
     stockArgX.dateEndTF = False
     # 结束日期参数
-    stockArgX.dateEndRange = '2018-04-18'
+    stockArgX.dateEndRange = '2018-05-21'
 
     ''' 规则参数 '''
     #成熟规则获取开关,开启时下面定义规则无效
