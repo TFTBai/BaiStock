@@ -1,5 +1,6 @@
 from common import commonUtil
-
+import pandas as pd
+from common import constant as con
 '''
  策略类
  用于筛选出股票后的操作模拟
@@ -143,3 +144,21 @@ def get_strategy_income(baseStockInfo,date,stockArgX):
             right_strategy.sell_day = day_count
             return right_strategy
     return right_strategy
+
+def simulateBestRank():
+    #首先读取模拟买卖csv
+    allCode = pd.read_csv(con.simulationPath + 'bestRank.csv', encoding='gbk')
+    #循环模拟买卖csv中code读取对应的股票csv
+    for code in allCode.code:
+        codeStr = str(code).zfill(6)
+        df = pd.read_csv(con.csvPath + codeStr + '.csv')
+        #根据模拟买卖csv的buyDate计算sellDate
+        dfThatDay = allCode[allCode['code'] == code]
+        print(code)
+        buyDate = str(dfThatDay.buyDate.values[0])
+        print(buyDate)
+        #根据buyDate和sellDate分别读取 open价 计算本股收益
+        buyPrice = df[df['date'] == buyDate]#todo 日期对比失败
+        print(buyPrice)
+        #写入buy价 sell价 当次收益率 累计收益率
+    #循环结束输出到新的csv

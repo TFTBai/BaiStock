@@ -86,6 +86,8 @@ def add_stock_derivative_data():
     for code in allCode.code:
         # if (code == 603997):
             count = count + 1
+            # if(count<810):
+            #     continue
             codeStr = str(code).zfill(6)
             # 3.读取本地csv数据
             stock_data = pd.read_csv(con.csvPath + codeStr + '.csv')
@@ -115,7 +117,7 @@ def add_index_derivative_data():
         stock_data = add_derivative_data(stock_data)
         # 7.将计算好的kdj写入对应csv中
         stock_data.to_csv(con.indexCsvPath + codeStr + '.csv', index=False)
-        log.info('已生成代码' + codeStr + '的衍生数据,生成总数量' + str(count))
+        log.info('已生成指数' + codeStr + '的衍生数据,生成总数量' + str(count))
     log.info("为所有的index增加衍生数据完毕!")
 
 
@@ -154,7 +156,7 @@ def put_base_csv_code_into_cash(stockArgX):
     count = 0
     for code in allCode.code:
         # count = count+1
-        # if count > 1:
+        # if count > 10:
         #   return baseCodeList
         codeStr = str(code).zfill(6)
         # if codeStr != '002323':

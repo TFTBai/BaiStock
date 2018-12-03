@@ -4,7 +4,7 @@
 from base import baseStock as bs
 from rule import rule
 from common import dateUtil
-
+import pandas as pd
 def init_csv():
     '''
     初始化股票基础数据
@@ -80,7 +80,7 @@ def start_stock_generator():
     stockArgX.mustByCsvName = 'gongshiv2'
     stockArgX.mustByCsvRule = [1,2,3,5,6,7,8,10,11,13,19,21]
     stockArgX.ruleNumListChoose = [1,2,3,5,6,7,8,11,13,19,21]
-    stockArgX.ruleNumListMust = [10]
+    stockArgX.ruleNumListMust = [10,20]
 
     # 大盘规则开关
     stockArgX.indexOpen = False
@@ -128,10 +128,18 @@ def start_stock_generator():
 
     ''' 是否发送邮件开关'''
     stockArgX.TFmail = False
-    #是否成功筛选dddddddddddddddddd
+    #是否成功筛选
     stockArgX.TFHaveResult = False
     #是否已经赋值第一排名信息
     stockArgX.TFHaveHighStock = False
+
+
+    '''增加校验total表变量'''
+    stockArgX.checkTotal = pd.DataFrame()
+
+    #增加在用成熟规则表循环情况下,是否使用20规则
+    stockArgX.rule20TF = True
+
     startDate = dateUtil.print_date()
     # 执行规则数据生成器方法！
     rule.make_stockData(stockArgX)

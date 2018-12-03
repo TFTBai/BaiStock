@@ -1,9 +1,11 @@
-csvPath = 'D:/workspace_github/BaiStock/data/csv/'
-indexCsvPath = 'D:/workspace_github/BaiStock/data/indexCsv/'
 basePath = 'D:/workspace_github/BaiStock/data/'
-detailPath = 'D:/workspace_github/BaiStock/data/detail/'
-rulesPath = 'D:/workspace_github/BaiStock/data/rulesCsv/'
-memberPath = 'D:/workspace_github/BaiStock/data/member/'
+csvPath = basePath+'csv/'
+indexCsvPath = basePath+'indexCsv/'
+detailPath = basePath+'detail/'
+rulesPath = basePath+'rulesCsv/'
+memberPath = basePath+'member/'
+incomePath = basePath+'income/'
+simulationPath = basePath+'simulation/'
 incomeDay = 31
 # 几日列表
 high_percent_list = [1.8, 1.9, 2.1, 2.2, 2.3, 2.4, 2.5, 2.6, 2.7, 2.8, 2.9, 3.0, 3.1, 3.2, 3.3, 3.4, 3.5, 3.6, 3.7]
@@ -36,7 +38,7 @@ def get_day_list(day):
         day_list.append(day_list_index)
     return day_list
 
-day_list = get_day_list(1)
+day_list = get_day_list(15)
 
 '''
 添加默认排序
@@ -62,7 +64,7 @@ def getAllBaseNameOrder(day):
         nameList.append('day' + str(nameListIndex) + nameListStringOpen)
     return nameList
 
-allBaseNameOrder = getAllBaseNameOrder(1)
+allBaseNameOrder = getAllBaseNameOrder(15)
 
 
 

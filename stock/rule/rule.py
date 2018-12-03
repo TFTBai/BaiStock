@@ -8,6 +8,7 @@ from simulation import simulation
 from calculate import calculate as cal
 from common import mailUtil
 
+
 def get_rules_df(stockArgX):
     '''
     获取成熟规则列表
@@ -495,7 +496,7 @@ def get_TF_stock(stockCashList, brackets, ruleList):
 
 
 def generate_report_form(ChooseCombinations, ruleNumListMust, ruleList, stockCashList, stockArgX):
-    # 声明最终的total报表
+    #声明最终的total报表
     totalReportForm = pd.DataFrame()
 
     # 规则实例数量
@@ -554,6 +555,7 @@ def generate_report_form(ChooseCombinations, ruleNumListMust, ruleList, stockCas
                 '''
                 # 将某规则的收益total数据添加到total报表中
                 totalReportForm = totalReportForm.append(totalProfit)
+                stockArgX.checkTotal = stockArgX.checkTotal.append(totalProfit)
 
     if(len(totalReportForm)>0):
         print('筛选成功,生成totalcsv文件开始!')
@@ -731,12 +733,16 @@ def make_stock_by_mode(stockCashList,stockArgX):
         rulesDataframe = get_rules_df(stockArgX)
         for index in rulesDataframe.index:
             print("开始筛选的规则排名为==============" + str(index+1))
-
             assembleRuleNumListMust(rulesDataframe, stockArgX, index)
             #按规则参数生成股票数据
             make_stockData_by_choose(stockArgX,stockCashList)
             # 组装StockArgX
             assembleStockArgX(rulesDataframe, stockArgX, index)
+        if(len(stockArgX.checkTotal)>0):
+            stockArgX.checkTotal.to_csv(con.detailPath + str(
+            dateUtil.get_date_date()) + dateUtil.get_hour_and_minute_str() + 'total验证收益'+ '.csv',
+                               index=False)
+            print('生成验证收益csv结束!')
     else:
         #按规则参数生成股票数据
         make_stockData_by_choose(stockArgX,stockCashList)
@@ -748,7 +754,8 @@ def assembleRuleNumListMust(rulesDataframe,stockArgX,index):
     #从ruleName中提取rule
     ruleName = ruleName.replace('rule', '')
     ruleName = ruleName.replace('+10', '')
-    ruleName = ruleName.replace('+20', '')
+    if(stockArgX.rule20TF==False):
+        ruleName = ruleName.replace('+20', '')
     ruleName = ruleName.replace('+', ',')
     ruleName = ruleName.replace('-', ',')
     ruleName = ruleName.replace(',', '', 1)
@@ -831,6 +838,7 @@ def make_stockData_by_choose(stockArgX,stockCashList):
     allList = ruleNumListChoose + ruleNumListMust
     # 对集合list排序
     allList.sort()
+    print(allList)
     # 根据集合list加载需要的规则对象
     ruleList = get_all_rule(allList)
 
