@@ -3,7 +3,7 @@ import pandas as pd
 from common import mylog as log, dateUtil
 from calculate import calculate as cal
 from common import constant as con
-
+import os
 
 # 生成本地base表数据
 
@@ -37,11 +37,12 @@ def create_all_stock_csv():
     allCode = get_all_code()
     # 循环当前所有stock 生成所有stock本地csv
     for code in allCode.code:
-        # if (code == 603997):
+         # if (code == 601952):
             codeStr = str(code).zfill(6)
             # 查询单stock历史所有数据
             create_stock_csv(codeStr)
     log.info("所有stock基础数据生成完毕!")
+
 
 
 '''
@@ -183,3 +184,17 @@ def create_all_index_csv():
         index_data = ts.get_k_data(codeStr, index=True, start='2010-01-01', end=str(dateUtil.get_date_date()))
         index_data.to_csv(con.indexCsvPath + codeStr + '.csv', index=False, encoding='gbk')
 
+'''检查不存在的CSV文件并输出'''
+def check_download_csv():
+    count = 0
+    # 1.读取base文件获取所有的csv文件名=code
+    allCode = get_all_code()
+    # 2.循环所有的csv文件
+    for code in allCode.code:
+        count = count + 1
+        codeStr = str(code).zfill(6)
+        if not os.path.exists(con.csvPath + codeStr + '.csv'):
+            log.info('不存在的文件名称为：'+codeStr+'已验证个数为：'+str(count))
+            create_stock_csv(codeStr)
+            log.info(codeStr+'的csv文件已生成')
+    log.info("所有的csv文件验证完毕!")
