@@ -730,8 +730,8 @@ def make_stock_by_mode(stockCashList,stockArgX):
         #获取成熟规则列表
         rulesDataframe = get_rules_df(stockArgX)
         for index in rulesDataframe.index:
-            if index > 30:
-                print("本日无排名前30数据")
+            if index > 50:
+                print("本日无排名前50数据")
                 break
             print("开始筛选的规则排名为==============" + str(index+1))
 
