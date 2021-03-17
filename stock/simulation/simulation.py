@@ -6,7 +6,6 @@ from common import commonUtil
  核心内容是按照固定的买卖策略买卖
  '''
 
-
 class strategy:
     #买入价格
     buy_price = 0

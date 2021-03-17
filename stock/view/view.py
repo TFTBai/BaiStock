@@ -1,5 +1,5 @@
 '''
-负责筛选规则后的展示
+负责筛选规则后的明细或者汇总数据表格生成
 '''
 from common import constant as con
 import pandas as pd

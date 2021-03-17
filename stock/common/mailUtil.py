@@ -4,6 +4,10 @@ from email.mime.multipart import MIMEMultipart
 from email.header import Header
 import pandas as pd
 from common import constant as con
+'''
+邮件相关方法
+'''
+
 
 def sendEmail(title,msg):
     # 发送邮件服务器

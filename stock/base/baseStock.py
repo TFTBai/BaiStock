@@ -5,6 +5,10 @@ from calculate import calculate as cal
 from common import constant as con
 import os
 
+'''
+基础表数据方法
+'''
+
 # 生成本地base表数据
 
 def create_base():
@@ -89,7 +93,11 @@ def add_stock_derivative_data():
             count = count + 1
             codeStr = str(code).zfill(6)
             # 3.读取本地csv数据
-            stock_data = pd.read_csv(con.csvPath + codeStr + '.csv')
+            try:
+             stock_data = pd.read_csv(con.csvPath + codeStr + '.csv')
+            except:
+             create_stock_csv(codeStr)
+             stock_data = pd.read_csv(con.csvPath + codeStr + '.csv')
             # 近期数据补全
             stock_data = cal.get_lost_data(stock_data, codeStr, False)
             # 增加衍生数据

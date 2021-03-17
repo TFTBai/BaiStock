@@ -6,13 +6,13 @@ from base import baseStock as bs
 
 # 按时间查询`
 def get_k_data():
-    df = ts.get_k_data(code = '603997',start='2010-01-01',end='2017-12-12')
-    df.to_csv("d:/1.csv")
+    df = ts.get_k_data(code = '601966',start='2010-01-01',end='2017-12-12')
+    print(df)
     return df
 # 按时间查询`
 def get_k_data1():
-    df = ts.get_k_data(code = '603997')
-    df.to_csv("d:/1.csv")
+    df = ts.get_k_data(code = '601966')
+    print(df)
     return df
 
 # 按时间查询
@@ -65,3 +65,4 @@ def get_day_count():
     print(d)
 
 
+get_k_data()

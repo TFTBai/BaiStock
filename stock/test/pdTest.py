@@ -1,10 +1,10 @@
 import pandas as pd
 import numpy as np
+from pandas.io.common import EmptyDataError
+
 from common import constant as con
 
-df = pd.read_csv(con.memberPath + 'member.csv', encoding='gbk')
 
-print(list(df.email))
 
 
 # df = pd.DataFrame(np.arange(16).reshape(4,4),index=[1,2,3,4],columns=['a','b','c','d'])
@@ -16,3 +16,11 @@ print(list(df.email))
     # print(df1)
     # df2 = int(df.loc[index][20:34].sort_values(ascending=False)[0:1].index[0].replace('d','').replace('cZ',''))
     # print(df2)
+# df = pd.read_csv(con.csvPath + '601966.csv', encoding='gbk')
+#
+# if(df.empty):
+#     print("是空的")
+try:
+ pd.read_csv(con.csvPath + '601966.csv', encoding='gbk')
+except EmptyDataError:
+    print("1")

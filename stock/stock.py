@@ -65,7 +65,7 @@ def start_stock_generator():
     stockArgX.groupByDaysTF = False
 
     # 是否使用开始日期参数开关
-    stockArgX.dateBeginTF = True
+    stockArgX.dateBeginTF = False
     # 开始日期参数
     stockArgX.dateBeginRange = str(dateUtil.get_date_date())
     # stockArgX.dateBeginRange = '2018-05-21'
@@ -76,11 +76,11 @@ def start_stock_generator():
 
     ''' 规则参数 '''
     #成熟规则获取开关,开启时下面定义规则无效
-    stockArgX.mustByCsvTF = True
-    stockArgX.mustByCsvName = 'gongshiv2'
+    stockArgX.mustByCsvTF = False
+    stockArgX.mustBmustByCsvTFyCsvName = 'gongshiv2'
     stockArgX.mustByCsvRule = [1,2,3,5,6,7,8,10,11,13,19,21]
-    stockArgX.ruleNumListChoose = [11,13,21,19]
-    stockArgX.ruleNumListMust = [1,10]
+    stockArgX.ruleNumListChoose = [10]
+    stockArgX.ruleNumListMust = [1,8,11,13,21]
 
     # 大盘规则开关
     stockArgX.indexOpen = False
@@ -127,7 +127,7 @@ def start_stock_generator():
     ''' 策略参数结束 '''
 
     ''' 是否发送邮件开关'''
-    stockArgX.TFmail = True
+    stockArgX.TFmail = False
     #是否成功筛选
     stockArgX.TFHaveResult = False
     #是否已经赋值第一排名信息
@@ -138,5 +138,5 @@ def start_stock_generator():
     dateUtil.print_end_date(startDate)
 
 # init_csv()
-update_csv()
+# update_csv()
 start_stock_generator()

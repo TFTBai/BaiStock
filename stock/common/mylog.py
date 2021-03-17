@@ -1,5 +1,9 @@
 import logging as log
 
+'''
+日志类
+'''
+
 # 日志配置
 log.basicConfig(level=log.DEBUG,
                 format='%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s %(message)s',
